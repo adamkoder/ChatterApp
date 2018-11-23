@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_marginTop="5dp"
+        android:layout_weight="90"
+        tools:srcCompat="@tools:sample/avatars[10]"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_weight="20"
+        android:layout_marginEnd="40dp"
+        android:layout_marginTop="2.5dp"
+        android:orientation="horizontal"
+        android:background="@drawable/message_bg_shape">
+
+        <TextView
+            android:text="Adam Maran"
+            android:id="@+id/username12"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginEnd="20dp"
+            android:textSize="17sp"
+            android:textAlignment="textEnd"/>
+
+        <TextView
+            android:text="Message trext that is too long to fit in the box so i has to make it streasch reali lkionig
+Message trext that is too long to fit in the box so i has to make it streasch reali lkionig"
+            android:id="@+id/message12"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@+id/username12"
+            android:layout_marginStart="10dp"
+            />
+
+    </RelativeLayout>
+</LinearLayout>
