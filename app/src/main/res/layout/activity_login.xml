@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/login_bg"
     tools:context=".LoginActivity">
 
     <EditText
@@ -13,15 +14,16 @@
         android:layout_above="@+id/enterRoomButton"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
-        android:ems="10"
+        android:ems="12"
         android:hint="@string/username"
         android:inputType="none|textEmailAddress|textPersonName"
-        android:textColorLink="@android:color/darker_gray"
         android:textAlignment="center"
+        android:textColorLink="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <Button
         android:id="@+id/enterRoomButton"
@@ -29,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginBottom="130dp"
+        android:layout_marginBottom="100dp"
         android:onClick="enterChat"
         android:text="@string/enter_chat"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">"#FFF"</color>
+    <color name="colorPrimary">#fff</color>
     <color name="colorPrimaryDark">#000</color>
     <color name="colorAccent">#303030</color>
     <color name="textColorPrimary">#303030</color>
     <color name="messageBgColor">#2D8FE0</color>
-    <color name="gradientStart">#004da0</color>
+    <color name="gradientStart">#005bbe</color>
     <color name="gradientEnd">#0c9cff</color>
 </resources>
