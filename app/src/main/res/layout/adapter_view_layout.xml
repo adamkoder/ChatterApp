@@ -11,6 +11,7 @@
         android:layout_height="50dp"
         android:layout_marginTop="5dp"
         android:layout_weight="90"
+        android:background="@drawable/round_image"
         tools:srcCompat="@tools:sample/avatars[10]"
         />
 
@@ -20,17 +21,16 @@
         android:layout_weight="20"
         android:layout_marginEnd="40dp"
         android:layout_marginTop="2.5dp"
-        android:orientation="horizontal"
-        android:background="@drawable/message_bg_shape">
+        android:orientation="horizontal">
 
         <TextView
             android:text="Adam Maran"
             android:id="@+id/username12"
             android:layout_width="match_parent"
             android:layout_height="20dp"
-            android:layout_marginEnd="20dp"
-            android:textSize="17sp"
-            android:textAlignment="textEnd"/>
+            android:layout_marginStart="15dp"
+            android:textSize="15sp"
+            android:textAlignment="textStart"/>
 
         <TextView
             android:text="Message trext that is too long to fit in the box so i has to make it streasch reali lkionig
@@ -40,6 +40,8 @@ Message trext that is too long to fit in the box so i has to make it streasch re
             android:layout_height="40dp"
             android:layout_below="@+id/username12"
             android:layout_marginStart="10dp"
+            android:background="@drawable/message_bg_shape"
+            android:textColor="#f9f9f9"
             />
 
     </RelativeLayout>
