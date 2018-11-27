@@ -21,27 +21,6 @@ public class ChatRoomActivity extends AppCompatActivity {
     private EditText message;
     private String username;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat_room);
-        Log.d(TAG, "on create started.");
-
-        list = new ArrayList<ChatBubbleInfo>();
-
-        adapter = new ChatBubbleAdapter(this, R.layout.adapter_view_layout, list);
-        listView = (ListView) findViewById(R.id.chat);
-        listView.setAdapter(adapter);
-
-        Intent intent = getIntent();
-        username = intent.getStringExtra(LoginActivity.USER_NAME);
-
-    }
-
-    /*
-        Method called by the Send button
-        Adds the message from the Plaint text field to the list onClick
-     */
     public void sendMessage(View view) {
         message = (EditText) findViewById(R.id.messageText);
 
@@ -62,6 +41,27 @@ public class ChatRoomActivity extends AppCompatActivity {
         adapter.notifyDataSetChanged();
         listView.smoothScrollToPosition(list.size() - 1);
     }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_chat_room);
+        Log.d(TAG, "on create started.");
+
+        list = new ArrayList<ChatBubbleInfo>();
+
+        adapter = new ChatBubbleAdapter(this, R.layout.adapter_view_layout, list);
+        listView = (ListView) findViewById(R.id.chat);
+        listView.setAdapter(adapter);
+
+        Intent intent = getIntent();
+        username = intent.getStringExtra(LoginActivity.USER_NAME);
+
+    }
+    /*
+        Method called by the Send button
+        Adds the message from the Plaint text field to the list onClick
+     */
 
 
 }

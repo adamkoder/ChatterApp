@@ -1,8 +1,8 @@
 package com.example.publicchat;
 
 public class ChatBubbleInfo {
-    private String username = "132";
-    private String message = "123";
+    private String username;
+    private String message;
 
     public ChatBubbleInfo(String username, String message) {
         this.username = username;

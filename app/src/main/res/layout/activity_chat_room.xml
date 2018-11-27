@@ -19,7 +19,7 @@
             android:layout_weight="80"
             android:background="@drawable/round_border_texture"
             android:inputType="text|textMultiLine"
-            android:padding="10dp"
+            android:padding="12dp"
             android:layout_gravity="start"
             android:textAlignment="textStart" />
 
