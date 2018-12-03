@@ -26,7 +26,6 @@
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_marginStart="25dp"
-            android:text="Adam Maran"
             android:textAlignment="textStart"
             android:textSize="16sp" />
 
@@ -40,8 +39,6 @@
             android:layout_below="@+id/username12"
             android:layout_marginStart="10dp"
             android:background="@drawable/message_bg_shape"
-            android:text="Message text that ish reali lkionig"
             android:textColor="#f9f9f9" />
-
     </RelativeLayout>
 </LinearLayout>

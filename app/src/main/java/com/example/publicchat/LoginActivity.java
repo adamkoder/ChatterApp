@@ -9,68 +9,79 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
+
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
     public static final String USER_NAME = "com.example.publicchat.USERNAME";
 
-    private ArrayList<User> listOfUsers = new ArrayList<User>();
-    private Iterator<User> iterator = listOfUsers.iterator();
-
-    private String key;
-
     private User currentUser;
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
+
+    private ArrayList<User> listOfIds = new ArrayList<User>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        listOfIds.add(new User("1", "John"));
+        listOfIds.add(new User("2", "Mike"));
+        listOfIds.add(new User("3", "Jevrozim"));
+        listOfIds.add(new User("4", "Stevan"));
+
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mEditor = mPreferences.edit();
     }
-    /*
+
+     /*
         Method thats called by the ENTER CHAT ROOM button
         It starts the Chat room activity and sends it the entered username
      */
     public void enterChat(View view){
         Intent intent = new Intent(this, ChatRoomActivity.class);
 
+
         //Gets the username typed in by the user
         EditText getUsername = (EditText) findViewById(R.id.username);
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        //Loop the listOfUsers looking for existing username, makes new one if username not found
+        User user = new User(Integer.toString(listOfIds.size() + 1), getUsername.getText().toString());
 
-        if(listOfUsers.isEmpty()){
-            listOfUsers.add(new User(String.valueOf(listOfUsers.size()), getUsername.getText().toString()));
-//            mEditor.putString(String.valueOf(listOfUsers.size()), getUsername.getText().toString());
-//            mEditor.apply();
-            this.key = listOfUsers.get(listOfUsers.size() - 1).getID();
-            this.currentUser = listOfUsers.get(listOfUsers.size() - 1);
+        if(listOfIds.size() <= 0) {
+            listOfIds.add(new User(Integer.toString(listOfIds.size() + 1), getUsername.getText().toString()));
+            currentUser = listOfIds.get(listOfIds.size());
         }
 
-        while(iterator.hasNext()){
-
-            if(!iterator.hasNext() || listOfUsers.isEmpty()){
-                listOfUsers.add(new User(String.valueOf(listOfUsers.size()), getUsername.getText().toString()));
-//                mEditor.putString(String.valueOf(listOfUsers.size()), getUsername.getText().toString());
-//                mEditor.apply();
-                this.key = iterator.next().getID();
-                this.currentUser = iterator.next();
-                break;
+        else if(listOfIds.contains(user)){
+            for (int i = 0; i < listOfIds.size(); i++) {
+                User tempUser = listOfIds.get(i);
+                if (tempUser.getUsername().equals(getUsername.getText().toString())) {
+                    currentUser = tempUser;
+                    break;
+                }
             }
+        }
 
-            else if(iterator.next().getUsername().equals(getUsername.getText().toString())) {
-                this.key = iterator.next().getID();
-                this.currentUser = iterator.next();
-                break;
-            }
+        else {
+            listOfIds.add(new User(Integer.toString(listOfIds.size()+1), getUsername.getText().toString()));
+            currentUser = listOfIds.get(listOfIds.size() - 1);
         }
 
         if(this.currentUser.getUsername().length() > 2) {
-            intent.putExtra(USER_NAME, mPreferences.getString(key, "Something went wrong"));
+//            intent.putExtra(USER_NAME, mPreferences.getString(key, "Something went wrong"));
+            mEditor.putString("currentUsername", getUsername.getText().toString());
+            mEditor.apply();
+            intent.putExtra(USER_NAME, currentUser.getUsername());
             startActivity(intent);
         }
         else {
