@@ -1,11 +1,13 @@
 package com.example.publicchat;
 
+import java.util.Date;
+
 public class Message {
     private String text;
     private User user;
-    private int time;
+    private Date time;
 
-    public Message(String text, User user, int time) {
+    public Message(String text, User user, Date time) {
         this.text = text;
         this.user = user;
         this.time = time;
@@ -27,11 +29,11 @@ public class Message {
         this.user = user;
     }
 
-    public int getTime() {
+    public Date getTime() {
         return time;
     }
 
-    public void setTime(int time) {
+    public void setTime(Date time) {
         this.time = time;
     }
 }

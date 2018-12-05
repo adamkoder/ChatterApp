@@ -6,7 +6,6 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -14,20 +13,26 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 public class ChatRoomActivity extends AppCompatActivity {
-    private static final String TAG = "ChatBubbleAdapter";
 
-    private ArrayList<ChatBubbleInfo> list;
+    private ArrayList<Message> chatHistory;
     private ChatBubbleAdapter adapter;
     private ListView listView;
 
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
+    private Gson gson = new Gson();
 
+    private User currentUser;
     private EditText message;
-    private String username;
+    private String user;
 
 
     @Override
@@ -39,33 +44,34 @@ public class ChatRoomActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        Log.d(TAG, "on create started.");
-
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        list = new ArrayList<ChatBubbleInfo>();
-
-        adapter = new ChatBubbleAdapter(this, R.layout.adapter_view_layout, list);
-        listView = (ListView) findViewById(R.id.chat);
-        listView.setAdapter(adapter);
 
         Intent intent = getIntent();
-        username = intent.getStringExtra(LoginActivity.USER_NAME);
+        user = intent.getStringExtra(LoginActivity.USER_NAME);
+        currentUser = fromStringToObj(user);
 
-        if(username == null)
-            username = mPreferences.getString("currentUsername", "something went wrong");
+        getChatListFromSharedPrefs();
+        if(chatHistory == null) {
+            chatHistory = new ArrayList<Message>();
+            chatHistory.add(new Message("Test me", currentUser, Calendar.getInstance().getTime()));
+        }
+
+        adapter = new ChatBubbleAdapter(this, R.layout.adapter_view_layout, chatHistory);
+        listView = (ListView) findViewById(R.id.chat);
+        listView.setAdapter(adapter);
     }
      /*
         Method called by the Send button
-        Adds the message from the Plaint text field to the list onClick
+        Adds the message from the Plaint text field to the chatHistory onClick
      */
     public void sendMessage(View view) {
         message = (EditText) findViewById(R.id.messageText);
 
-        //Adds the chatbubble to the list if message entered
+        //Adds the chatbubble to the chatHistory if message entered
         if (message.length() > 0) {
-            ChatBubbleInfo chatBubbleInfo = new ChatBubbleInfo(username, message.getText().toString());
-            list.add(chatBubbleInfo);
+            Message chatBubbleInfo = new Message(message.getText().toString(), currentUser, Calendar.getInstance().getTime());
+            chatHistory.add(chatBubbleInfo);
             message.setText(null);
 
         }
@@ -77,9 +83,10 @@ public class ChatRoomActivity extends AppCompatActivity {
         }
 
         adapter.notifyDataSetChanged();
-        listView.smoothScrollToPosition(list.size() - 1);
+        listView.smoothScrollToPosition(chatHistory.size() - 1);
     }
 
+    //Removes the currentUsername key from Shared Preferences and logsout the user
     public void logoutButton(){
         mPreferences.edit().remove("currentUsername").apply();
 
@@ -105,5 +112,21 @@ public class ChatRoomActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_settings, menu);
         return true;
+    }
+
+    //Converts string to objects
+    private User fromStringToObj(String json){
+        return gson.fromJson(json,User.class);
+    }
+
+
+    public void getChatListFromSharedPrefs(){
+        String json = mPreferences.getString("chatHistory","");
+        chatHistory = gson.fromJson(json,new TypeToken<ArrayList<Message>>(){}.getType());
+    }
+
+    public void setChatListToSharedPrefs(){
+        String json = gson.toJson(chatHistory);
+        mEditor.putString("chatHistory", json).apply();
     }
 }

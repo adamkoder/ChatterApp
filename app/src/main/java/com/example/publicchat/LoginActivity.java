@@ -11,15 +11,8 @@ import android.widget.EditText;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -29,25 +22,25 @@ public class LoginActivity extends AppCompatActivity {
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
 
-    private ArrayList<User> listOfIds = new ArrayList<User>();
+    private Gson gson = new Gson();
+    private ArrayList<User> listOfIds;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        listOfIds.add(new User("1", "John"));
-        listOfIds.add(new User("2", "Mike"));
-        listOfIds.add(new User("3", "Jevrozim"));
-        listOfIds.add(new User("4", "Stevan"));
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
+
+        getIdListFromSharedPrefs();
+
     }
 
-     /*
+    /*
         Method thats called by the ENTER CHAT ROOM button
         It starts the Chat room activity and sends it the entered username
-     */
+    */
     public void enterChat(View view){
         Intent intent = new Intent(this, ChatRoomActivity.class);
 
@@ -57,9 +50,13 @@ public class LoginActivity extends AppCompatActivity {
 
         User user = new User(Integer.toString(listOfIds.size() + 1), getUsername.getText().toString());
 
-        if(listOfIds.size() <= 0) {
+        if(listOfIds == null){
+            listOfIds = new ArrayList<User>();
+        }
+
+        if(listOfIds.size() <= 0 ) {
             listOfIds.add(new User(Integer.toString(listOfIds.size() + 1), getUsername.getText().toString()));
-            currentUser = listOfIds.get(listOfIds.size());
+            currentUser = listOfIds.get(listOfIds.size() - 1);
         }
 
         else if(listOfIds.contains(user)){
@@ -78,15 +75,31 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         if(this.currentUser.getUsername().length() > 2) {
-//            intent.putExtra(USER_NAME, mPreferences.getString(key, "Something went wrong"));
-            mEditor.putString("currentUsername", getUsername.getText().toString());
-            mEditor.apply();
-            intent.putExtra(USER_NAME, currentUser.getUsername());
+            mEditor.putString("currentUsername", getUsername.getText().toString()).apply();
+            intent.putExtra(USER_NAME, fromObjToString(currentUser));
+            setIdListToSharedPrefs();
             startActivity(intent);
         }
         else {
             Snackbar snackbar = Snackbar.make(findViewById(R.id.enterRoomButton),"Enter a name with 3 or more characters", Snackbar.LENGTH_LONG);
             snackbar.show();
         }
+    }
+
+    //adds the list of all user to the class list from the listOfIds key
+    private void getIdListFromSharedPrefs(){
+        String json = mPreferences.getString("listOfIds","");
+        listOfIds = gson.fromJson(json,new TypeToken<ArrayList<User>>(){}.getType());
+    }
+
+    //Sets the current list of users to Shared Preferences under the key listOfIds
+    private void setIdListToSharedPrefs(){
+        String json = gson.toJson(listOfIds);
+        mEditor.putString("listOfIds", json).apply();
+    }
+
+    //Converts Objects to strings
+    private String fromObjToString(User userObj){
+        return gson.toJson(userObj);
     }
 }

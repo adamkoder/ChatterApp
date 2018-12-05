@@ -22,12 +22,22 @@
         android:orientation="horizontal">
 
         <TextView
+            android:text="Adam Maran"
+            android:layout_marginBottom="2dp"
             android:id="@+id/username12"
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_marginStart="25dp"
             android:textAlignment="textStart"
             android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/time12"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_marginEnd="5dp"
+            android:textAlignment="textEnd"
+            android:textSize="12sp" />
 
         <TextView
             android:textSize="15dp"

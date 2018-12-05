@@ -22,7 +22,7 @@
             android:windowSoftInputMode="stateVisible|adjustResize">
         </activity>
         <activity android:name=".ChatRoomActivity"
-                  android:theme="@style/Theme.AppCompat.Light.NoActionBar"/>
+                  android:exported="true"/>
     </application>
 
 </manifest>
