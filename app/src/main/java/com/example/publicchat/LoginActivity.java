@@ -16,7 +16,7 @@ import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String USER_NAME = "com.example.publicchat.USERNAME";
+    public static final String USER = "USER";
 
     private User currentUser;
     private SharedPreferences mPreferences;
@@ -29,6 +29,10 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        Intent intent = getIntent();
+        String listOfIds = intent.getStringExtra(LoadingScreen.listOfUsers);
+        this.listOfIds = gson.fromJson(listOfIds, new TypeToken<ArrayList<User>>(){}.getType());
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
@@ -49,10 +53,6 @@ public class LoginActivity extends AppCompatActivity {
         EditText getUsername = (EditText) findViewById(R.id.username);
 
         User user = new User(Integer.toString(listOfIds.size() + 1), getUsername.getText().toString());
-
-        if(listOfIds == null){
-            listOfIds = new ArrayList<User>();
-        }
 
         if(listOfIds.size() <= 0 ) {
             listOfIds.add(new User(Integer.toString(listOfIds.size() + 1), getUsername.getText().toString()));
@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
 
         if(this.currentUser.getUsername().length() > 2) {
             mEditor.putString("currentUsername", getUsername.getText().toString()).apply();
-            intent.putExtra(USER_NAME, fromObjToString(currentUser));
+            intent.putExtra(USER, fromObjToString(currentUser));
             setIdListToSharedPrefs();
             startActivity(intent);
         }

@@ -17,12 +17,13 @@ import java.util.Date;
 
 public class LoadingScreen extends AppCompatActivity {
 
+    public static final String listOfUsers = "listOfUsers";
+
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
     private Gson gson = new Gson();
 
-    private ArrayList<User> listOfIds;
-    private ArrayList<Message> chat;
+    private ArrayList<User> listOfIds = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,24 +33,23 @@ public class LoadingScreen extends AppCompatActivity {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
 
-        listOfIds = new ArrayList<User>();
         listOfIds.add(new User("1", "Adam"));
 
-        chat = new ArrayList<Message>();
-        chat.add(new Message("Test message", listOfIds.get(0), Calendar.getInstance().getTime()));
-
-        setChatListToSharedPrefs();
         setIdListToSharedPrefs();
 
-        if(mPreferences.getString("currentUsername", "").equals("")){
-            final Intent intent = new Intent(this, LoginActivity.class);
-            timer(intent);
-        }
+        System.out.println("Do i run at all?");
 
-        else{
-            final Intent intent = new Intent(this, ChatRoomActivity.class);
+        getIdListFromSharedPrefs();
+//        if(mPreferences.getString("currentUsername", "").equals("")){
+            final Intent intent = new Intent(this, LoginActivity.class);
+            intent.putExtra(listOfUsers, fromObjToString(listOfIds));
             timer(intent);
-        }
+//        }
+
+//        else{
+//            final Intent intent = new Intent(this, ChatRoomActivity.class);
+//            timer(intent);
+//        }
     }
 
     private void timer(final Intent intent){
@@ -77,13 +77,7 @@ public class LoadingScreen extends AppCompatActivity {
         mEditor.putString("listOfIds", json).apply();
     }
 
-    public void getChatListFromSharedPrefs(){
-        String json = mPreferences.getString("chat","");
-        chat = gson.fromJson(json,new TypeToken<ArrayList<Message>>(){}.getType());
-    }
-
-    public void setChatListToSharedPrefs(){
-        String json = gson.toJson(chat);
-        mEditor.putString("chat", json).apply();
+    private String fromObjToString(ArrayList list){
+        return gson.toJson(list);
     }
 }

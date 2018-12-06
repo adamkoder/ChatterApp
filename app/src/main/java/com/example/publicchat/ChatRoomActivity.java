@@ -32,7 +32,6 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     private User currentUser;
     private EditText message;
-    private String user;
 
 
     @Override
@@ -46,10 +45,8 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-
         Intent intent = getIntent();
-        user = intent.getStringExtra(LoginActivity.USER_NAME);
-        currentUser = fromStringToObj(user);
+        currentUser = fromStringToObj(intent.getStringExtra(LoginActivity.USER));         //<---------------------------------
 
         getChatListFromSharedPrefs();
         if(chatHistory == null) {
@@ -72,6 +69,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         if (message.length() > 0) {
             Message chatBubbleInfo = new Message(message.getText().toString(), currentUser, Calendar.getInstance().getTime());
             chatHistory.add(chatBubbleInfo);
+//            setChatListToSharedPrefs();
             message.setText(null);
 
         }
@@ -109,7 +107,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu, this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_settings, menu);
         return true;
     }
@@ -119,12 +117,13 @@ public class ChatRoomActivity extends AppCompatActivity {
         return gson.fromJson(json,User.class);
     }
 
-
+    //Gets the chat history from the shared preferences
     public void getChatListFromSharedPrefs(){
         String json = mPreferences.getString("chatHistory","");
         chatHistory = gson.fromJson(json,new TypeToken<ArrayList<Message>>(){}.getType());
     }
 
+    //Adds the chat history to shared preferences
     public void setChatListToSharedPrefs(){
         String json = gson.toJson(chatHistory);
         mEditor.putString("chatHistory", json).apply();
