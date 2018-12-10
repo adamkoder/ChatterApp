@@ -33,23 +33,19 @@ public class LoadingScreen extends AppCompatActivity {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
 
-        listOfIds.add(new User("1", "Adam"));
-
-        setIdListToSharedPrefs();
-
         System.out.println("Do i run at all?");
 
         getIdListFromSharedPrefs();
-//        if(mPreferences.getString("currentUsername", "").equals("")){
+        if(mPreferences.getString("currentUsername", "").equals("")){
             final Intent intent = new Intent(this, LoginActivity.class);
             intent.putExtra(listOfUsers, fromObjToString(listOfIds));
             timer(intent);
-//        }
+        }
 
-//        else{
-//            final Intent intent = new Intent(this, ChatRoomActivity.class);
-//            timer(intent);
-//        }
+        else{
+            final Intent intent = new Intent(this, ChatRoomActivity.class);
+            timer(intent);
+        }
     }
 
     private void timer(final Intent intent){

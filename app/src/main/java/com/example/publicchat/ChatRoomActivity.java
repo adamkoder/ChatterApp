@@ -30,6 +30,7 @@ public class ChatRoomActivity extends AppCompatActivity {
     private SharedPreferences.Editor mEditor;
     private Gson gson = new Gson();
 
+    private Intent intent;
     private User currentUser;
     private EditText message;
 
@@ -45,8 +46,9 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        Intent intent = getIntent();
-        currentUser = fromStringToObj(intent.getStringExtra(LoginActivity.USER));         //<---------------------------------
+        intent = getIntent();
+        System.out.println(intent.getExtras());
+        currentUser = fromStringToObj(intent.getStringExtra(LoginActivity.USER));        //<------------------------
 
         getChatListFromSharedPrefs();
         if(chatHistory == null) {

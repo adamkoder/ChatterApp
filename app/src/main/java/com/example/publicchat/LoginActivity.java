@@ -31,14 +31,10 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         Intent intent = getIntent();
-        String listOfIds = intent.getStringExtra(LoadingScreen.listOfUsers);
-        this.listOfIds = gson.fromJson(listOfIds, new TypeToken<ArrayList<User>>(){}.getType());
+        this.listOfIds = gson.fromJson(intent.getStringExtra(LoadingScreen.listOfUsers), new TypeToken<ArrayList<User>>(){}.getType());
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
-
-        getIdListFromSharedPrefs();
-
     }
 
     /*
@@ -48,33 +44,29 @@ public class LoginActivity extends AppCompatActivity {
     public void enterChat(View view){
         Intent intent = new Intent(this, ChatRoomActivity.class);
 
-
         //Gets the username typed in by the user
         EditText getUsername = (EditText) findViewById(R.id.username);
 
-        User user = new User(Integer.toString(listOfIds.size() + 1), getUsername.getText().toString());
 
-        if(listOfIds.size() <= 0 ) {
-            listOfIds.add(new User(Integer.toString(listOfIds.size() + 1), getUsername.getText().toString()));
-            currentUser = listOfIds.get(listOfIds.size() - 1);
-        }
 
-        else if(listOfIds.contains(user)){
-            for (int i = 0; i < listOfIds.size(); i++) {
-                User tempUser = listOfIds.get(i);
-                if (tempUser.getUsername().equals(getUsername.getText().toString())) {
-                    currentUser = tempUser;
+        if(getUsername.getText().toString().length() > 2) {
+
+            if(listOfIds.size() <= 0 ) {
+                listOfIds.add(new User(Integer.toString(listOfIds.size() + 1), getUsername.getText().toString()));
+                currentUser = listOfIds.get(listOfIds.size() - 1);
+            }
+
+            for(int i = 0; i < listOfIds.size(); i++){
+                if(listOfIds.get(i).getUsername().equals(getUsername.getText().toString())){
+                    currentUser = listOfIds.get(i);
                     break;
                 }
+                else if(i == listOfIds.size()){
+                    listOfIds.add(new User(Integer.toString(listOfIds.size()+1), getUsername.getText().toString()));
+                    currentUser = listOfIds.get(listOfIds.size() - 1);
+                }
             }
-        }
 
-        else {
-            listOfIds.add(new User(Integer.toString(listOfIds.size()+1), getUsername.getText().toString()));
-            currentUser = listOfIds.get(listOfIds.size() - 1);
-        }
-
-        if(this.currentUser.getUsername().length() > 2) {
             mEditor.putString("currentUsername", getUsername.getText().toString()).apply();
             intent.putExtra(USER, fromObjToString(currentUser));
             setIdListToSharedPrefs();
