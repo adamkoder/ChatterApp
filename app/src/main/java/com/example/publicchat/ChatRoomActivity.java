@@ -93,12 +93,23 @@ public class ChatRoomActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    public void clearChat(){
+        chatHistory.clear();
+        setChatListToSharedPrefs();
+        adapter.notifyDataSetChanged();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()) {
             case R.id.action_logout:
                 logoutButton();
                 return true;
+
+            case R.id.action_clearChat:
+                clearChat();
+                return true;
+
 
             default:
                 return super.onOptionsItemSelected(item);

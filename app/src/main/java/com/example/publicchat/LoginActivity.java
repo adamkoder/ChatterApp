@@ -49,6 +49,9 @@ public class LoginActivity extends AppCompatActivity {
 
         if(getUsername.getText().toString().length() > 2) {
 
+            if(listOfIds == null)
+                getIdListFromSharedPrefs();
+
             if(listOfIds.size() <= 0 ) {
                 listOfIds.add(new User(Integer.toString(listOfIds.size() + 1), getUsername.getText().toString()));
                 currentUser = listOfIds.get(listOfIds.size() - 1);
