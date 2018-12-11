@@ -45,8 +45,6 @@ public class LoginActivity extends AppCompatActivity {
         //Gets the username typed in by the user
         EditText getUsername = (EditText) findViewById(R.id.username);
 
-
-
         if(getUsername.getText().toString().length() > 2) {
 
             if(listOfIds == null)
@@ -62,10 +60,11 @@ public class LoginActivity extends AppCompatActivity {
                     currentUser = listOfIds.get(i);
                     break;
                 }
-                else if(i == listOfIds.size()){
-                    listOfIds.add(new User(Integer.toString(listOfIds.size()+1), getUsername.getText().toString()));
-                    currentUser = listOfIds.get(listOfIds.size() - 1);
-                }
+            }
+
+            if(currentUser == null){
+                listOfIds.add(new User(Integer.toString(listOfIds.size()+1), getUsername.getText().toString()));
+                currentUser = listOfIds.get(listOfIds.size() - 1);
             }
 
             mEditor.putString("currentUsername", fromObjToString(currentUser)).apply();

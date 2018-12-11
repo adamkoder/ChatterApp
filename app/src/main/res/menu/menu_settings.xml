@@ -7,4 +7,8 @@
     <item android:id="@+id/action_clearChat"
           android:title="Clear Chat"
           app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_search"
+        android:title="Search chat"
+        app:actionViewClass="android.widget.SearchView" />
 </menu>

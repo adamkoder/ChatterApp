@@ -38,7 +38,7 @@ public class LoadingScreen extends AppCompatActivity {
 
         else{
             final Intent intent = new Intent(this, ChatRoomActivity.class);
-            intent.putExtra(IntentKeys.USER, fromObjToJSON(listOfIds.get(1)));
+            intent.putExtra(IntentKeys.USER, mPreferences.getString("currentUsername", "not working!"));
             timer(intent);
         }
     }
