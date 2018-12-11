@@ -3,7 +3,6 @@ package com.example.publicchat;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.CountDownTimer;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -12,12 +11,9 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
 public class LoadingScreen extends AppCompatActivity {
 
-    public static final String listOfUsers = "listOfUsers";
 
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
@@ -33,17 +29,16 @@ public class LoadingScreen extends AppCompatActivity {
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
 
-        System.out.println("Do i run at all?");
-
         getIdListFromSharedPrefs();
         if(mPreferences.getString("currentUsername", "").equals("")){
             final Intent intent = new Intent(this, LoginActivity.class);
-            intent.putExtra(listOfUsers, fromObjToString(listOfIds));
+            intent.putExtra(IntentKeys.LIST_OF_USERS, fromListToJSON(listOfIds));
             timer(intent);
         }
 
         else{
             final Intent intent = new Intent(this, ChatRoomActivity.class);
+            intent.putExtra(IntentKeys.USER, fromObjToJSON(listOfIds.get(1)));
             timer(intent);
         }
     }
@@ -67,13 +62,13 @@ public class LoadingScreen extends AppCompatActivity {
         listOfIds = gson.fromJson(json,new TypeToken<ArrayList<User>>(){}.getType());
     }
 
-    //Sets the current list of users to Shared Preferences under the key listOfIds
-    private void setIdListToSharedPrefs(){
-        String json = gson.toJson(listOfIds);
-        mEditor.putString("listOfIds", json).apply();
-    }
-
-    private String fromObjToString(ArrayList list){
+    private String fromListToJSON(ArrayList list){
         return gson.toJson(list);
+    }
+    private String fromObjToJSON(User user){
+        return gson.toJson(user);
+    }
+    private User fromStringToObj(String json){
+        return gson.fromJson(json,User.class);
     }
 }

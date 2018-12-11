@@ -18,7 +18,6 @@ import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 public class ChatRoomActivity extends AppCompatActivity {
 
@@ -34,7 +33,6 @@ public class ChatRoomActivity extends AppCompatActivity {
     private User currentUser;
     private EditText message;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,21 +43,22 @@ public class ChatRoomActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        mEditor = mPreferences.edit();
 
         intent = getIntent();
         System.out.println(intent.getExtras());
-        currentUser = fromStringToObj(intent.getStringExtra(LoginActivity.USER));        //<------------------------
+        currentUser = fromStringToObj(intent.getStringExtra(IntentKeys.USER));      //<----------------------
 
         getChatListFromSharedPrefs();
         if(chatHistory == null) {
             chatHistory = new ArrayList<Message>();
-            chatHistory.add(new Message("Test me", currentUser, Calendar.getInstance().getTime()));
         }
 
         adapter = new ChatBubbleAdapter(this, R.layout.adapter_view_layout, chatHistory);
         listView = (ListView) findViewById(R.id.chat);
         listView.setAdapter(adapter);
     }
+
      /*
         Method called by the Send button
         Adds the message from the Plaint text field to the chatHistory onClick
@@ -71,13 +70,12 @@ public class ChatRoomActivity extends AppCompatActivity {
         if (message.length() > 0) {
             Message chatBubbleInfo = new Message(message.getText().toString(), currentUser, Calendar.getInstance().getTime());
             chatHistory.add(chatBubbleInfo);
-//            setChatListToSharedPrefs();
+            setChatListToSharedPrefs();
             message.setText(null);
-
         }
 
         //Display snackbar popup if message wasnt entered
-        else if (message.length() == 0) {
+        else if (message.length() <= 0) {
             Snackbar snackbar = Snackbar.make(findViewById(R.id.messageText), "Please enter a message", Snackbar.LENGTH_SHORT);
             snackbar.show();
         }
@@ -116,18 +114,16 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     //Converts string to objects
     private User fromStringToObj(String json){
-        return gson.fromJson(json,User.class);
+        return gson.fromJson(json, User.class);
     }
 
     //Gets the chat history from the shared preferences
     public void getChatListFromSharedPrefs(){
-        String json = mPreferences.getString("chatHistory","");
-        chatHistory = gson.fromJson(json,new TypeToken<ArrayList<Message>>(){}.getType());
+        chatHistory = gson.fromJson(mPreferences.getString("chatHistory",""),new TypeToken<ArrayList<Message>>(){}.getType());
     }
 
     //Adds the chat history to shared preferences
     public void setChatListToSharedPrefs(){
-        String json = gson.toJson(chatHistory);
-        mEditor.putString("chatHistory", json).apply();
+        mEditor.putString("chatHistory", gson.toJson(chatHistory)).apply();
     }
 }

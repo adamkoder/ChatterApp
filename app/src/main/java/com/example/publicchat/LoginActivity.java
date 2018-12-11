@@ -16,8 +16,6 @@ import java.util.ArrayList;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String USER = "USER";
-
     private User currentUser;
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
@@ -31,7 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         Intent intent = getIntent();
-        this.listOfIds = gson.fromJson(intent.getStringExtra(LoadingScreen.listOfUsers), new TypeToken<ArrayList<User>>(){}.getType());
+        this.listOfIds = gson.fromJson(intent.getStringExtra(IntentKeys.LIST_OF_USERS), new TypeToken<ArrayList<User>>(){}.getType());
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
@@ -67,8 +65,8 @@ public class LoginActivity extends AppCompatActivity {
                 }
             }
 
-            mEditor.putString("currentUsername", getUsername.getText().toString()).apply();
-            intent.putExtra(USER, fromObjToString(currentUser));
+            mEditor.putString("currentUsername", fromObjToString(currentUser)).apply();
+            intent.putExtra(IntentKeys.USER, fromObjToString(currentUser));
             setIdListToSharedPrefs();
             startActivity(intent);
         }

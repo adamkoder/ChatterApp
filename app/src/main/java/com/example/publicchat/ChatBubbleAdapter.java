@@ -28,6 +28,7 @@ public class ChatBubbleAdapter extends ArrayAdapter<Message> {
 
         //Get the information
         User user = getItem(position).getUser();
+        System.out.println(getItem(position).getUser());
         String message = getItem(position).getText();
         Date time = getItem(position).getTime();
 
@@ -42,7 +43,7 @@ public class ChatBubbleAdapter extends ArrayAdapter<Message> {
         TextView tvMessage = (TextView) convertView.findViewById(R.id.message12);
         TextView tvTime = (TextView) convertView.findViewById(R.id.time12);
 
-//        tvUsername.setText(user.getUsername());
+        tvUsername.setText(user.getUsername());
         tvMessage.setText(message);
         tvTime.setText(formatTime);
 
