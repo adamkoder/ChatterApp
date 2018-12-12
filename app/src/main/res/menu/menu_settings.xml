@@ -9,6 +9,6 @@
           app:showAsAction="never"/>
     <item
         android:id="@+id/action_search"
-        android:title="Search chat"
+        android:title="Search Chat"
         app:actionViewClass="android.widget.SearchView" />
 </menu>

@@ -62,6 +62,6 @@
         android:layout_marginBottom="16dp"
         android:divider="@null"
         android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll" />
+        android:transcriptMode="alwaysScroll"/>
 
 </RelativeLayout>
