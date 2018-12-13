@@ -32,9 +32,12 @@ public class ChatBubbleAdapter extends ArrayAdapter<Message> {
 
         Message chatBubbleInfo = new Message(message, user, time);
 
-        if(ChatRoomActivity.getCurrentUser().getID().equals(user.getID()))
+        if(ChatRoomActivity.getCurrentUser().getID().equals(user.getID())) {
             mResource = R.layout.current_user_chat_bubble;
-        else mResource = R.layout.other_users_chat_bubble;
+        }
+        else {
+            mResource = R.layout.other_users_chat_bubble;
+        }
 
         LayoutInflater inflater = LayoutInflater.from(mContext);
         convertView = inflater.inflate(mResource, parent, false);
@@ -45,10 +48,12 @@ public class ChatBubbleAdapter extends ArrayAdapter<Message> {
         TextView tvMessage = (TextView) convertView.findViewById(R.id.message12);
         TextView tvTime = (TextView) convertView.findViewById(R.id.time12);
 
-//        System.out.println("Id of user is: " + getChatRoomUser().getID());
-        tvUsername.setText(user.getUsername());
-        tvMessage.setText(message);
+        if(mResource == R.layout.other_users_chat_bubble){
+            tvUsername.setText(user.getUsername());
+        }
+
         tvTime.setText(formatTime);
+        tvMessage.setText(message);
 
         return convertView;
     }

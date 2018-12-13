@@ -43,6 +43,9 @@ public class LoadingScreen extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed(){}
+
     private void timer(final Intent intent){
         new CountDownTimer(2000, 1000) {
             @Override
@@ -56,19 +59,11 @@ public class LoadingScreen extends AppCompatActivity {
             }
         }.start();
     }
-
     private void getIdListFromSharedPrefs(){
         String json = mPreferences.getString("listOfIds","");
         listOfIds = gson.fromJson(json,new TypeToken<ArrayList<User>>(){}.getType());
     }
-
     private String fromListToJSON(ArrayList list){
         return gson.toJson(list);
-    }
-    private String fromObjToJSON(User user){
-        return gson.toJson(user);
-    }
-    private User fromStringToObj(String json){
-        return gson.fromJson(json,User.class);
     }
 }

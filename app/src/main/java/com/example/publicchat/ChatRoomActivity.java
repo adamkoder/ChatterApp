@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
@@ -24,6 +25,7 @@ import android.widget.PopupWindow;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.xeoh.android.texthighlighter.TextHighlighter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -84,7 +86,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         //Display snackbar popup if message wasnt entered
         else if (message.length() <= 0) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.messageText), "Please enter a message", Snackbar.LENGTH_SHORT);
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.messageText), "Can't send empty message", Snackbar.LENGTH_SHORT);
             snackbar.show();
         }
 
@@ -125,29 +127,24 @@ public class ChatRoomActivity extends AppCompatActivity {
 
 //        float density = ChatRoomActivity.this.getResources().getDisplayMetrics().density;
         final PopupWindow popupWindow = new PopupWindow(layout, ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT, true);
+        popupWindow.showAtLocation(layout, Gravity.TOP,0, 0);
 
-//        ((ImageButton) layout.findViewById(R.id.popup_search_button).setOnClickListener(new View.OnClickListener() {
+//        ImageButton imageButton = (ImageButton) findViewById(R.id.popup_search_button);
+//        imageButton.setOnClickListener(new View.OnClickListener(){
 //            @Override
 //            public void onClick(View view){
-//                popupWindow.dismiss();
+//                new TextHighlighter()
+//                        .setBackgroundColor(Color.parseColor("FFFF00"))
+//                        .addTarget(findViewById(R.id.chat));
 //            }
 //        });
-        popupWindow.showAtLocation(layout, Gravity.TOP,0, 0);
     }
-
-//    Finds the given keyword in the chatHistory list
-//    public void searchChatHistory(String){
-//        for(int i = 0; i < chatHistory.size(); i++){
-//            if(chatHistory.get(i).getText().toLowerCase().contains(""))
-//        }
-//    }
 
     //Removes the currentUsername key from Shared Preferences and logsout the user
     public void logoutButton(){
         mPreferences.edit().remove("currentUsername").apply();
 
         Intent intent = new Intent(this, LoginActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(intent);
     }
 
@@ -157,6 +154,10 @@ public class ChatRoomActivity extends AppCompatActivity {
         setChatListToSharedPrefs();
         adapter.notifyDataSetChanged();
     }
+
+    //Disables the back button action
+    @Override
+    public void onBackPressed(){}
 
     //Converts string to objects
     private User fromStringToObj(String json){
@@ -173,6 +174,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         mEditor.putString("chatHistory", gson.toJson(chatHistory)).apply();
     }
 
+    //Getter for currentUser
     public static User getCurrentUser() {
         return currentUser;
     }

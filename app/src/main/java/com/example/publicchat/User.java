@@ -2,11 +2,13 @@ package com.example.publicchat;
 
 public class User {
     private String ID;
-    private String Username;
+    private String username;
+    private String password;
 
-    public User(String ID, String username) {
+    public User(String ID, String username, String password) {
         this.ID = ID;
-        Username = username;
+        this.username = username;
+        this.password = password;
     }
 
     public String getID() {
@@ -18,10 +20,18 @@ public class User {
     }
 
     public String getUsername() {
-        return Username;
+        return username;
     }
 
     public void setUsername(String username) {
-        Username = username;
+        username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
     }
 }

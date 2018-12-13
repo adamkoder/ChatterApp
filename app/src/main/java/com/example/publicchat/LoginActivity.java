@@ -33,6 +33,8 @@ public class LoginActivity extends AppCompatActivity {
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
+
+        getIdListFromSharedPrefs();
     }
 
     /*
@@ -40,37 +42,28 @@ public class LoginActivity extends AppCompatActivity {
         It starts the Chat room activity and sends it the entered username
     */
     public void enterChat(View view){
-        Intent intent = new Intent(this, ChatRoomActivity.class);
-
         //Gets the username typed in by the user
-        EditText getUsername = (EditText) findViewById(R.id.username);
+        EditText getUsername = (EditText) findViewById(R.id.login_username);
+        EditText getPassword = (EditText) findViewById(R.id.login_password);
 
         if(getUsername.getText().toString().length() > 2) {
-
-            if(listOfIds == null)
-                getIdListFromSharedPrefs();
-
-            if(listOfIds.size() <= 0 ) {
-                listOfIds.add(new User(Integer.toString(listOfIds.size() + 1), getUsername.getText().toString()));
-                currentUser = listOfIds.get(listOfIds.size() - 1);
-            }
-
             for(int i = 0; i < listOfIds.size(); i++){
                 if(listOfIds.get(i).getUsername().equals(getUsername.getText().toString())){
+                    if(listOfIds.get(i).getPassword().equals(getPassword.getText().toString())){
                     currentUser = listOfIds.get(i);
-                    break;
+
+                    Intent intent = new Intent(this, ChatRoomActivity.class);
+                    mEditor.putString("currentUsername", fromObjToString(currentUser)).apply();
+                    intent.putExtra(IntentKeys.USER, fromObjToString(currentUser));
+                    startActivity(intent);
+                    }
                 }
             }
 
             if(currentUser == null){
-                listOfIds.add(new User(Integer.toString(listOfIds.size()+1), getUsername.getText().toString()));
-                currentUser = listOfIds.get(listOfIds.size() - 1);
+                Snackbar snackbar = Snackbar.make(findViewById(R.id.enterRoomButton),"Username not found, or invalid password", Snackbar.LENGTH_LONG);
+                snackbar.show();
             }
-
-            mEditor.putString("currentUsername", fromObjToString(currentUser)).apply();
-            intent.putExtra(IntentKeys.USER, fromObjToString(currentUser));
-            setIdListToSharedPrefs();
-            startActivity(intent);
         }
         else {
             Snackbar snackbar = Snackbar.make(findViewById(R.id.enterRoomButton),"Enter a name with 3 or more characters", Snackbar.LENGTH_LONG);
@@ -78,20 +71,28 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    public void toRegistrationActivity(View view){
+        Intent intent = new Intent(this, RegistrationActivity.class);
+        intent.putExtra(IntentKeys.LIST_OF_USERS, fromListToJSON(listOfIds));
+        startActivity(intent);
+    }
+
+    @Override
+    public void onBackPressed(){}
+
     //adds the list of all user to the class list from the listOfIds key
     private void getIdListFromSharedPrefs(){
         String json = mPreferences.getString("listOfIds","");
         listOfIds = gson.fromJson(json,new TypeToken<ArrayList<User>>(){}.getType());
     }
 
-    //Sets the current list of users to Shared Preferences under the key listOfIds
-    private void setIdListToSharedPrefs(){
-        String json = gson.toJson(listOfIds);
-        mEditor.putString("listOfIds", json).apply();
-    }
-
     //Converts Objects to strings
     private String fromObjToString(User userObj){
         return gson.toJson(userObj);
+    }
+
+    //Converts List to JSON
+    private String fromListToJSON(ArrayList list){
+        return gson.toJson(list);
     }
 }

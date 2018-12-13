@@ -5,50 +5,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="2.5dp"
-        android:layout_marginStart="20dp"
-        android:layout_weight="30"
-        android:orientation="horizontal">
-
-        <TextView
-            android:text="Text from layout"
-            android:id="@+id/username12"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginEnd="15dp"
-            android:textAlignment="textEnd"
-            android:textSize="16sp" />
-
-        <TextView
-            android:text="12:45"
-            android:id="@+id/time12"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_marginStart="25dp"
-            android:textAlignment="textStart"
-            android:textSize="12sp" />
-
-        <TextView
-            android:textSize="15dp"
-            android:padding="5dp"
-            android:paddingStart="10dp"
-            android:id="@+id/message12"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/username12"
-            android:layout_marginStart="10dp"
-            android:background="@drawable/message_bg_shape"
-            android:textColor="#f9f9f9" />
-    </RelativeLayout>
-
     <ImageView
         android:id="@+id/imageView"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="2dp"
         android:layout_weight="90"
         tools:srcCompat="@tools:sample/avatars[10]" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2.5dp"
+        android:layout_marginEnd="15dp"
+        android:layout_weight="20"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/username12"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_alignStart="@id/message12"
+            android:layout_marginEnd="5dp"
+            android:layout_toStartOf="@+id/time12"
+            android:text="Text from layout"
+            android:textAlignment="textStart"
+            android:textSize="12sp" />
+
+        <TextView
+            android:text="12:45"
+            android:id="@+id/time12"
+            android:layout_width="wrap_content"
+            android:layout_height="20dp"
+            android:layout_marginEnd="5dp"
+            android:textAlignment="textEnd"
+            android:textSize="12sp"
+            android:layout_alignEnd="@+id/message12"/>
+
+        <TextView
+            android:text="sdksjdksjdkdkd"
+            android:textSize="15dp"
+            android:paddingVertical="7dp"
+            android:paddingHorizontal="13dp"
+            android:id="@+id/message12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/time12"
+            android:background="@drawable/other_users_background"
+            android:textColor="#f9f9f9" />
+    </RelativeLayout>
+
 </LinearLayout>
