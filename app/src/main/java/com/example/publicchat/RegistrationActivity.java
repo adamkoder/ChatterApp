@@ -36,20 +36,25 @@ public class RegistrationActivity extends AppCompatActivity {
 
         canCreateNewUser = true;
 
-        Intent intent = new Intent();
-        this.listOfIds = gson.fromJson(intent.getStringExtra(IntentKeys.LIST_OF_USERS), new TypeToken<ArrayList<User>>(){}.getType());
+        getIdListFromSharedPrefs();
     }
 
     public void registerUser(View view){
         EditText getUsername = (EditText) findViewById(R.id.registrationUsername);
         EditText getPassword = (EditText) findViewById(R.id.registrationPassword);
+        EditText getPasswordConfirm = (EditText) findViewById(R.id.registrationPasswordConfirm);
 
         this.currentUserName = getUsername.getText().toString();
         this.currentPassword = getPassword.getText().toString();
 
-        if(currentPassword.length() > 6 || currentUserName.length() > 3) {
+        if(!currentPassword.equals(getPasswordConfirm.getText().toString()))
+        {
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.registrationUsername), "Passwords don't match", Snackbar.LENGTH_LONG);
+            snackbar.show();
+        }
+        else if(currentPassword.length() > 6 || currentUserName.length() > 3) {
             if (currentUserName.isEmpty() || currentPassword.isEmpty()) {
-                Snackbar snackbar = Snackbar.make(findViewById(R.id.registrationButton), "Please fill in all the information", Snackbar.LENGTH_LONG);
+                Snackbar snackbar = Snackbar.make(findViewById(R.id.registrationUsername), "Please fill in all the information", Snackbar.LENGTH_LONG);
                 snackbar.show();
                 canCreateNewUser = false;
             }
@@ -63,11 +68,11 @@ public class RegistrationActivity extends AppCompatActivity {
 
             else {
                 for (int i = 0; i < listOfIds.size(); i++) {
-                    if (listOfIds.get(i).getUsername().equals(currentUserName)) {
+                    if (listOfIds.get(i).getUsername().toLowerCase().equals(currentUserName.toLowerCase())) {
                         ((EditText) findViewById(R.id.registrationUsername)).setText("");
-                        Snackbar snackbar = Snackbar.make(findViewById(R.id.registrationButton), "Username already exists", Snackbar.LENGTH_LONG);
+                        Snackbar snackbar = Snackbar.make(findViewById(R.id.registrationUsername), "Username already exists", Snackbar.LENGTH_LONG);
                         snackbar.show();
-                        this.canCreateNewUser = false;
+                        canCreateNewUser = false;
                         break;
                     }
                 }
@@ -77,7 +82,7 @@ public class RegistrationActivity extends AppCompatActivity {
             }
         }
         else {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.registrationButton), "Password must be longer than 6 characters", Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.registrationUsername), "Password must be longer than 6 characters", Snackbar.LENGTH_LONG);
             snackbar.show();
         }
 
@@ -102,5 +107,10 @@ public class RegistrationActivity extends AppCompatActivity {
     private void setIdListToSharedPrefs(){
         String json = gson.toJson(listOfIds);
         mEditor.putString("listOfIds", json).apply();
+    }
+
+    private void getIdListFromSharedPrefs(){
+        String json = mPreferences.getString("listOfIds","");
+        listOfIds = gson.fromJson(json,new TypeToken<ArrayList<User>>(){}.getType());
     }
 }

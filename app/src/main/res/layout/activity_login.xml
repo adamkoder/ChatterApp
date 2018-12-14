@@ -4,7 +4,29 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#2B3D53"
     tools:context=".LoginActivity">
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="150dp"
+        android:layout_height="122dp"
+        android:layout_above="@+id/logo_text"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/logo"
+        android:layout_marginBottom="5dp"/>
+
+    <TextView
+        android:id="@+id/logo_text"
+        android:text="Public Chat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/login_username"
+        android:layout_centerHorizontal="true"
+        android:textSize="35sp"
+        android:textStyle="bold"
+        android:textColor="#cfcfcf"
+        android:layout_marginBottom="80dp"/>
 
     <EditText
         android:id="@+id/login_username"
@@ -13,11 +35,14 @@
         android:layout_above="@+id/login_password"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
+        android:textColorHint="#cfcfcf"
+        android:textColor="#f9f9f9"
         android:ems="12"
         android:hint="@string/username"
-        android:inputType="none|textEmailAddress|textPersonName"
+        android:inputType="none|textPersonName|textCapSentences"
         android:textAlignment="center"
-        android:textColorLink="@android:color/darker_gray"
+        android:background="@drawable/round_border_texture"
+        android:paddingVertical="12dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
@@ -28,42 +53,74 @@
         android:id="@+id/login_password"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_above="@+id/enterRoomButton"
+        android:layout_above="@+id/textInfo"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
         android:ems="12"
+        android:textColorHint="#cfcfcf"
         android:hint="@string/password"
         android:inputType="textPassword"
+        android:background="@drawable/round_border_texture"
+        android:paddingVertical="12dp"
+        android:textColor="#f9f9f9"
         android:textAlignment="center"
-        android:textColorLink="@android:color/darker_gray"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.502"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
+    <LinearLayout
+        android:id="@+id/textInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/enterRoomButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+        <CheckBox
+            android:id="@+id/rememberCheckBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Remember me"
+            android:textColor="#f9f9f9"
+            android:buttonTint="#009A9A" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/forgotPassword"
+            android:textColor="#009A9A"
+            android:layout_marginStart="50dp"/>
+    </LinearLayout>
+
     <Button
         android:id="@+id/enterRoomButton"
-        android:layout_width="wrap_content"
+        android:layout_width="170dp"
+        android:textColor="#f9f9f9"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginBottom="16dp"
         android:onClick="enterChat"
+        android:paddingHorizontal="15dp"
         android:text="@string/enter_chat"
+        android:background="@drawable/call_to_action_button"
         android:layout_above="@id/registerButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_username" />
 
-    <Button
+    <TextView
         android:id="@+id/registerButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="70dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="46dp"
         android:onClick="toRegistrationActivity"
-        android:text="Register"
+        android:text="@string/registration_button"
+        android:textColor="#009A9A"
+        android:textSize="18sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/login_username" />

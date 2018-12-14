@@ -1,10 +1,8 @@
 package com.example.publicchat;
 
-import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Color;
 import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
@@ -14,18 +12,15 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
 import android.widget.PopupWindow;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.xeoh.android.texthighlighter.TextHighlighter;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -67,7 +62,10 @@ public class ChatRoomActivity extends AppCompatActivity {
         adapter = new ChatBubbleAdapter(this, R.layout.other_users_chat_bubble, chatHistory);
         listView = (ListView) findViewById(R.id.chat);
         listView.setAdapter(adapter);
+
+        setTitle("Logged in as : " + currentUser.getUsername());
     }
+    
 
      /*
         Method called by the Send button
@@ -125,19 +123,8 @@ public class ChatRoomActivity extends AppCompatActivity {
         LayoutInflater inflater = (LayoutInflater) ChatRoomActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View layout = inflater.inflate(R.layout.search_popup_window, null);
 
-//        float density = ChatRoomActivity.this.getResources().getDisplayMetrics().density;
         final PopupWindow popupWindow = new PopupWindow(layout, ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT, true);
         popupWindow.showAtLocation(layout, Gravity.TOP,0, 0);
-
-//        ImageButton imageButton = (ImageButton) findViewById(R.id.popup_search_button);
-//        imageButton.setOnClickListener(new View.OnClickListener(){
-//            @Override
-//            public void onClick(View view){
-//                new TextHighlighter()
-//                        .setBackgroundColor(Color.parseColor("FFFF00"))
-//                        .addTarget(findViewById(R.id.chat));
-//            }
-//        });
     }
 
     //Removes the currentUsername key from Shared Preferences and logsout the user

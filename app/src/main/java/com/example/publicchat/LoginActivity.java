@@ -2,11 +2,13 @@ package com.example.publicchat;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Paint;
 import android.preference.PreferenceManager;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.google.gson.Gson;
@@ -19,6 +21,7 @@ public class LoginActivity extends AppCompatActivity {
     private User currentUser;
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
+    private CheckBox rememberCheckBox;
 
     private Gson gson = new Gson();
     private ArrayList<User> listOfIds;
@@ -27,6 +30,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        rememberCheckBox = (CheckBox) findViewById(R.id.rememberCheckBox);
 
         Intent intent = getIntent();
         this.listOfIds = gson.fromJson(intent.getStringExtra(IntentKeys.LIST_OF_USERS), new TypeToken<ArrayList<User>>(){}.getType());
@@ -46,6 +51,8 @@ public class LoginActivity extends AppCompatActivity {
         EditText getUsername = (EditText) findViewById(R.id.login_username);
         EditText getPassword = (EditText) findViewById(R.id.login_password);
 
+        boolean canShow = true;
+
         if(getUsername.getText().toString().length() > 2) {
             for(int i = 0; i < listOfIds.size(); i++){
                 if(listOfIds.get(i).getUsername().equals(getUsername.getText().toString())){
@@ -53,15 +60,24 @@ public class LoginActivity extends AppCompatActivity {
                     currentUser = listOfIds.get(i);
 
                     Intent intent = new Intent(this, ChatRoomActivity.class);
-                    mEditor.putString("currentUsername", fromObjToString(currentUser)).apply();
+
+                    if(this.rememberCheckBox.isChecked())
+                        mEditor.putString("currentUsername", fromObjToString(currentUser)).apply();
+
                     intent.putExtra(IntentKeys.USER, fromObjToString(currentUser));
                     startActivity(intent);
+                    }
+                    else{
+                        Snackbar snackbar = Snackbar.make(findViewById(R.id.enterRoomButton),"Invalid password", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        canShow = true;
+                        break;
                     }
                 }
             }
 
-            if(currentUser == null){
-                Snackbar snackbar = Snackbar.make(findViewById(R.id.enterRoomButton),"Username not found, or invalid password", Snackbar.LENGTH_LONG);
+            if(currentUser == null && canShow){
+                Snackbar snackbar = Snackbar.make(findViewById(R.id.enterRoomButton),"Username not found, please register", Snackbar.LENGTH_LONG);
                 snackbar.show();
             }
         }
@@ -73,7 +89,6 @@ public class LoginActivity extends AppCompatActivity {
 
     public void toRegistrationActivity(View view){
         Intent intent = new Intent(this, RegistrationActivity.class);
-        intent.putExtra(IntentKeys.LIST_OF_USERS, fromListToJSON(listOfIds));
         startActivity(intent);
     }
 

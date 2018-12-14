@@ -11,7 +11,7 @@
         android:layout_height="50dp"
         android:layout_marginTop="2dp"
         android:layout_weight="90"
-        tools:srcCompat="@tools:sample/avatars[10]" />
+        tools:srcCompat="@tools:sample/avatars[16]" />
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -21,38 +21,54 @@
         android:layout_weight="20"
         android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/username12"
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_alignStart="@id/message12"
-            android:layout_marginEnd="5dp"
-            android:layout_toStartOf="@+id/time12"
-            android:text="Text from layout"
-            android:textAlignment="textStart"
-            android:textSize="12sp" />
-
-        <TextView
-            android:text="12:45"
-            android:id="@+id/time12"
-            android:layout_width="wrap_content"
-            android:layout_height="20dp"
-            android:layout_marginEnd="5dp"
-            android:textAlignment="textEnd"
-            android:textSize="12sp"
-            android:layout_alignEnd="@+id/message12"/>
-
-        <TextView
-            android:text="sdksjdksjdkdkd"
-            android:textSize="15dp"
-            android:paddingVertical="7dp"
-            android:paddingHorizontal="13dp"
-            android:id="@+id/message12"
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/time12"
+            android:layout_marginTop="2.5dp"
+            android:layout_marginEnd="50dp"
+            android:layout_weight="20"
             android:background="@drawable/other_users_background"
-            android:textColor="#f9f9f9" />
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:id="@+id/layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="3dp"
+                android:layout_marginEnd="8dp"
+                android:minWidth="130dp">
+
+                <TextView
+                    android:id="@+id/username12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:text=""
+                    android:textAlignment="textStart"
+                    android:textColor="#303030"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/time12"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_marginStart="95dp"
+                    android:text="12:45"
+                    android:textColor="#303030"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <TextView
+                android:text="lsdjk g dfsg"
+                android:id="@+id/message12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/layout"
+                android:paddingHorizontal="8dp"
+                android:paddingBottom="8dp"
+                android:textColor="#303030"
+                android:textSize="17dp" />
+        </RelativeLayout>
     </RelativeLayout>
 
 </LinearLayout>

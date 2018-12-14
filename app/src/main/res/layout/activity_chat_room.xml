@@ -5,6 +5,7 @@
     android:id="@+id/chatRoomView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#2B3D53"
     tools:context=".ChatRoomActivity">
 
     <android.support.v7.widget.Toolbar
@@ -13,11 +14,10 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         android:layout="@menu/menu_settings"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:buttonGravity="top"
         app:popupTheme="@style/Theme.AppCompat.Light">
-
     </android.support.v7.widget.Toolbar>
 
     <LinearLayout
@@ -34,7 +34,7 @@
             android:layout_marginStart="16dp"
             android:layout_weight="80"
             android:background="@drawable/round_border_texture"
-            android:inputType="text|textMultiLine"
+            android:inputType="text|textMultiLine|textCapSentences"
             android:padding="12dp"
             android:textAlignment="textStart" />
 
@@ -50,7 +50,6 @@
             android:background="@drawable/round_border_texture"
             android:onClick="sendMessage"
             android:text="@string/send_message" />
-
     </LinearLayout>
 
     <ListView
@@ -59,9 +58,9 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/sendingInfoLay"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="?attr/actionBarSize"
         android:layout_marginBottom="16dp"
         android:divider="@null"
         android:stackFromBottom="true"
-        android:transcriptMode="alwaysScroll"/>
-
+        android:transcriptMode="alwaysScroll" />
 </RelativeLayout>

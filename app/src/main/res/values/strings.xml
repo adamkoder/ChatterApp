@@ -1,7 +1,10 @@
 <resources>
-    <string name="app_name">Public Chat</string>
+    <string name="app_name">Public chat</string>
     <string name="username">Username</string>
     <string name="enter_chat">Enter Chat room</string>
     <string name="send_message">Send</string>
     <string name="password">Password</string>
+    <string name="passwordConfirm">Confirm Password</string>
+    <string name="registration_button"><u>Dont have an account? Register here</u></string>
+    <string name="forgotPassword"><u>Forgot password?</u></string>
 </resources>

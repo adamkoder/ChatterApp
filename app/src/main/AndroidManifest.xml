@@ -24,7 +24,9 @@
         <activity
             android:name=".ChatRoomActivity"
             android:exported="true" />
-        <activity android:name=".RegistrationActivity"></activity>
+        <activity android:name=".RegistrationActivity"
+                  android:windowSoftInputMode="adjustResize"
+            ></activity>
     </application>
 
 </manifest>
