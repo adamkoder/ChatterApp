@@ -5,26 +5,28 @@
     android:id="@+id/chatRoomView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#2B3D53"
     tools:context=".ChatRoomActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
+        style="@style/toolbarDesign"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:elevation="4dp"
         android:layout="@menu/menu_settings"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:buttonGravity="top"
+        app:navigationIcon="@drawable/logo48"
         app:popupTheme="@style/Theme.AppCompat.Light">
+
     </android.support.v7.widget.Toolbar>
 
     <LinearLayout
         android:id="@+id/sendingInfoLay"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true">
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="16dp">
 
         <EditText
             android:id="@+id/messageText"
@@ -33,23 +35,20 @@
             android:layout_gravity="start"
             android:layout_marginStart="16dp"
             android:layout_weight="80"
-            android:background="@drawable/round_border_texture"
+            android:background="@drawable/rounded_white_middle"
             android:inputType="text|textMultiLine|textCapSentences"
             android:padding="12dp"
             android:textAlignment="textStart" />
 
-        <Button
-            android:id="@+id/sendButton"
+        <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginStart="20dp"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:layout_weight="10"
-            android:background="@drawable/round_border_texture"
+            android:background="@drawable/send_button"
+            android:src="@drawable/ic_send"
+            android:layout_marginStart="8dp"
             android:onClick="sendMessage"
-            android:text="@string/send_message" />
+            />
     </LinearLayout>
 
     <ListView
@@ -57,7 +56,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/sendingInfoLay"
-        android:layout_centerHorizontal="true"
+        android:layout_alignParentStart="true"
         android:layout_marginTop="?attr/actionBarSize"
         android:layout_marginBottom="16dp"
         android:divider="@null"

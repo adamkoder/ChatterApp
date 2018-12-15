@@ -3,6 +3,7 @@ package com.example.publicchat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
@@ -43,6 +44,7 @@ public class ChatRoomActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
+//        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
 
         //sets toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);

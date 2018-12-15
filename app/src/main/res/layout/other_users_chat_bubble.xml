@@ -26,7 +26,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2.5dp"
             android:layout_marginEnd="50dp"
-            android:layout_weight="20"
             android:background="@drawable/other_users_background"
             android:orientation="horizontal">
 

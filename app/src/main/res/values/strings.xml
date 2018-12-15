@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Public chat</string>
+    <string name="app_name">ChatterUp</string>
     <string name="username">Username</string>
     <string name="enter_chat">Enter Chat room</string>
     <string name="send_message">Send</string>

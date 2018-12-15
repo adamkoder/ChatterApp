@@ -7,11 +7,11 @@
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
         android:layout_marginStart="110dp"
         android:layout_marginTop="5dp"
         android:layout_marginEnd="25dp"
-        android:background="@drawable/current_user_background"
-        android:orientation="horizontal">
+        android:background="@drawable/current_user_background">
 
         <TextView
             android:id="@+id/time12"
@@ -27,7 +27,6 @@
             android:textSize="12sp" />
 
         <TextView
-            android:text=" sdlfjg sldfgjldsflgjsdf"
             android:id="@+id/message12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,6 +34,7 @@
             android:layout_alignParentEnd="true"
             android:paddingHorizontal="8dp"
             android:paddingBottom="8dp"
+            android:text=" sdlfjlgjsdf"
             android:textColor="#f9f9f9"
             android:textSize="17sp" />
     </RelativeLayout>

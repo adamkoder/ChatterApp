@@ -7,4 +7,5 @@
     <color name="messageBgColor">#2D8FE0</color>
     <color name="gradientStart">#005bbe</color>
     <color name="gradientEnd">#0c9cff</color>
+    <color name="toolbarBackground">#2B3D53</color>
 </resources>

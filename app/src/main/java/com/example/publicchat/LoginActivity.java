@@ -30,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+//        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
 
         rememberCheckBox = (CheckBox) findViewById(R.id.rememberCheckBox);
 
@@ -61,16 +62,23 @@ public class LoginActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(this, ChatRoomActivity.class);
 
-                    if(this.rememberCheckBox.isChecked())
-                        mEditor.putString("currentUsername", fromObjToString(currentUser)).apply();
+                        if(this.rememberCheckBox.isChecked())
+                            mEditor.putString("currentUsername", fromObjToString(currentUser)).apply();
 
-                    intent.putExtra(IntentKeys.USER, fromObjToString(currentUser));
-                    startActivity(intent);
+                        intent.putExtra(IntentKeys.USER, fromObjToString(currentUser));
+                        startActivity(intent);
                     }
+
+                    else if(currentUser.getPassword().isEmpty()){
+                        Snackbar snackbar = Snackbar.make(findViewById(R.id.enterRoomButton),"Please enter your password", Snackbar.LENGTH_LONG);
+                        snackbar.show();
+                        break;
+                    }
+
                     else{
                         Snackbar snackbar = Snackbar.make(findViewById(R.id.enterRoomButton),"Invalid password", Snackbar.LENGTH_LONG);
                         snackbar.show();
-                        canShow = true;
+                        canShow = false;
                         break;
                     }
                 }
@@ -82,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         }
         else {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.enterRoomButton),"Enter a name with 3 or more characters", Snackbar.LENGTH_LONG);
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.enterRoomButton),"Please enter user information", Snackbar.LENGTH_LONG);
             snackbar.show();
         }
     }
