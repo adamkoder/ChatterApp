@@ -3,8 +3,8 @@ package com.example.publicchat;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -18,15 +18,22 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
 import android.widget.PopupWindow;
-import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 public class ChatRoomActivity extends AppCompatActivity {
+
+    public static final String TAG = "TAG";
 
     private ArrayList<Message> chatHistory;
     private ChatBubbleAdapter adapter;
@@ -34,6 +41,13 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
+
+    private FirebaseDatabase database;
+    private DatabaseReference dbRefChatHistory;
+    private DatabaseReference pushedDbRefChatHistory;
+
+    private Message chatBubbleInfo;
+
     private Gson gson = new Gson();
 
     private Intent intent;
@@ -44,7 +58,6 @@ public class ChatRoomActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
-//        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
 
         //sets toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
@@ -56,9 +69,13 @@ public class ChatRoomActivity extends AppCompatActivity {
         intent = getIntent();
         currentUser = fromStringToObj(intent.getStringExtra(IntentKeys.USER));
 
-        getChatListFromSharedPrefs();
+        database = FirebaseDatabase.getInstance();
+        dbRefChatHistory = database.getReference().child(DbKeys.chatRoom);
+        pushedDbRefChatHistory = dbRefChatHistory.push();
+
+        getChatHistoryFromDatabase();
         if(chatHistory == null) {
-            chatHistory = new ArrayList<Message>();
+            chatHistory = new ArrayList<>();
         }
 
         adapter = new ChatBubbleAdapter(this, R.layout.other_users_chat_bubble, chatHistory);
@@ -78,9 +95,9 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         //Adds the chatbubble to the chatHistory if message entered
         if (message.length() > 0) {
-            Message chatBubbleInfo = new Message(message.getText().toString(), currentUser, Calendar.getInstance().getTime());
+            chatBubbleInfo = new Message(message.getText().toString(), currentUser, Calendar.getInstance().getTime());
             chatHistory.add(chatBubbleInfo);
-            setChatListToSharedPrefs();
+            setChatHistoryToDatabase();
             message.setText(null);
         }
 
@@ -132,15 +149,14 @@ public class ChatRoomActivity extends AppCompatActivity {
     //Removes the currentUsername key from Shared Preferences and logsout the user
     public void logoutButton(){
         mPreferences.edit().remove("currentUsername").apply();
-
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
     }
 
     //Removes all the Nodes from the chatHistory list
     public void clearChat(){
-        chatHistory.clear();
-        setChatListToSharedPrefs();
+        chatHistory = new ArrayList<>();
+        setChatHistoryToDatabase();
         adapter.notifyDataSetChanged();
     }
 
@@ -153,14 +169,31 @@ public class ChatRoomActivity extends AppCompatActivity {
         return gson.fromJson(json, User.class);
     }
 
-    //Gets the chat history from the shared preferences
-    public void getChatListFromSharedPrefs(){
-        chatHistory = gson.fromJson(mPreferences.getString("chatHistory",""),new TypeToken<ArrayList<Message>>(){}.getType());
+    //Gets the chat history from real time database
+    public void getChatHistoryFromDatabase(){
+        dbRefChatHistory.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                chatHistory.clear();
+                List<String> keys = new ArrayList<>();
+                for(DataSnapshot chatBubble : dataSnapshot.getChildren()){
+                    keys.add(chatBubble.getKey());
+                    Message message = chatBubble.getValue(Message.class);
+                    chatHistory.add(message);
+                    adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getApplicationContext(), "Sum Ting Wong", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     //Adds the chat history to shared preferences
-    public void setChatListToSharedPrefs(){
-        mEditor.putString("chatHistory", gson.toJson(chatHistory)).apply();
+    public void setChatHistoryToDatabase(){
+       dbRefChatHistory.push().setValue(chatBubbleInfo);
     }
 
     //Getter for currentUser

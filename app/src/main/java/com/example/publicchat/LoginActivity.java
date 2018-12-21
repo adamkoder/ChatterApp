@@ -30,7 +30,6 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-//        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
 
         rememberCheckBox = (CheckBox) findViewById(R.id.rememberCheckBox);
 
@@ -107,6 +106,10 @@ public class LoginActivity extends AppCompatActivity {
     private void getIdListFromSharedPrefs(){
         String json = mPreferences.getString("listOfIds","");
         listOfIds = gson.fromJson(json,new TypeToken<ArrayList<User>>(){}.getType());
+    }
+    private void setIdListToSharedPrefs(){
+        String json = gson.toJson(listOfIds);
+        mEditor.putString("listOfIds", json).apply();
     }
 
     //Converts Objects to strings

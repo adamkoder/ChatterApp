@@ -7,6 +7,9 @@ public class Message {
     private User user;
     private Date time;
 
+    public Message() {
+    }
+
     public Message(String text, User user, Date time) {
         this.text = text;
         this.user = user;

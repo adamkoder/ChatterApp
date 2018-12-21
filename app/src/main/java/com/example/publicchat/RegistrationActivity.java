@@ -3,12 +3,19 @@ package com.example.publicchat;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -20,8 +27,11 @@ public class RegistrationActivity extends AppCompatActivity {
     private Gson gson = new Gson();
     private boolean canCreateNewUser;
 
+    private FirebaseAuth mAuth;
+
     private String currentUserName;
     private String currentPassword;
+    private String currentEmail;
 
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
@@ -30,10 +40,11 @@ public class RegistrationActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registration);
-//        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
 
         mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         mEditor = mPreferences.edit();
+
+        mAuth = FirebaseAuth.getInstance();
 
         canCreateNewUser = true;
 
@@ -44,9 +55,11 @@ public class RegistrationActivity extends AppCompatActivity {
         EditText getUsername = (EditText) findViewById(R.id.registrationUsername);
         EditText getPassword = (EditText) findViewById(R.id.registrationPassword);
         EditText getPasswordConfirm = (EditText) findViewById(R.id.registrationPasswordConfirm);
+        EditText getEmail = (EditText) findViewById(R.id.registrationEmail);
 
         this.currentUserName = getUsername.getText().toString();
         this.currentPassword = getPassword.getText().toString();
+        this.currentEmail = getEmail.getText().toString();
 
         if(!currentPassword.equals(getPasswordConfirm.getText().toString()))
         {
@@ -79,6 +92,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 }
             }
             if (canCreateNewUser) {
+                System.out.println("PA JESAM!");
                 createNewUser();
             }
         }
@@ -92,6 +106,24 @@ public class RegistrationActivity extends AppCompatActivity {
     //Adds a new user to the list and starts the ChatRoomActivity with that User
     private void createNewUser(){
         listOfIds.add(new User(Integer.toString(listOfIds.size() + 1), currentUserName, currentPassword));
+
+        mAuth.createUserWithEmailAndPassword(currentEmail, currentPassword)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(getApplicationContext(), "Successful registration", Toast.LENGTH_LONG).show();
+                            updateUI();
+                        }
+                        else{
+                            Toast.makeText(getApplicationContext(), "Workn't", Toast.LENGTH_LONG).show();
+                            System.out.println("PA NE RADI");
+                        }
+                    }
+                });
+    }
+
+    private void updateUI(){
         Intent intent = new Intent(this, ChatRoomActivity.class);
         intent.putExtra(IntentKeys.USER, fromObjToString(listOfIds.get(listOfIds.size() - 1)));
         mEditor.putString("currentUsername", fromObjToString(listOfIds.get(listOfIds.size() - 1)));
