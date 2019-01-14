@@ -4,15 +4,15 @@ import java.util.Date;
 
 public class Message {
     private String text;
-    private User user;
+    private String username;
     private Date time;
 
     public Message() {
     }
 
-    public Message(String text, User user, Date time) {
+    public Message(String text, String username, Date time) {
         this.text = text;
-        this.user = user;
+        this.username = username;
         this.time = time;
     }
 
@@ -24,12 +24,12 @@ public class Message {
         this.text = text;
     }
 
-    public User getUser() {
-        return user;
+    public String getUser() {
+        return username;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(String username) {
+        this.username = username;
     }
 
     public Date getTime() {

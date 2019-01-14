@@ -1,60 +1,74 @@
 package com.example.publicchat;
 
-import android.content.Context;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 
-public class ChatBubbleAdapter extends ArrayAdapter<Message> {
+public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleAdapter.ViewHolder> {
 
-    private Context mContext;
-    private int mResource;
+    private ArrayList<Message> chat;
+    private Message m;
 
-    public ChatBubbleAdapter(Context context, int resource, ArrayList<Message> list) {
-        super(context, resource, list);
-        this.mContext = context;
-        this.mResource = resource;
+    public class ViewHolder extends RecyclerView.ViewHolder{
+        public TextView messageText, time, username;
+
+        public ViewHolder(View view){
+            super(view);
+            messageText = (TextView) view.findViewById(R.id.message12);
+            time = (TextView) view.findViewById(R.id.time12);
+            username = (TextView) view.findViewById(R.id.username12);
+        }
+    }
+
+    public ChatBubbleAdapter(ArrayList<Message> chat){
+        this.chat = chat;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent){
-        //Get the information
-        User user = getItem(position).getUser();
-        String message = getItem(position).getText();
-        Date time = getItem(position).getTime();
+    public void onBindViewHolder (ViewHolder holder, int position){
+        m = chat.get(position);
+        holder.messageText.setText(m.getText());
 
-        Message chatBubbleInfo = new Message(message, user, time);
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm");
+        String formattedTime = formatter.format(m.getTime());
+        holder.time.setText(formattedTime);
 
-        if(ChatRoomActivity.getCurrentUser().getID().equals(user.getID())) {
-            mResource = R.layout.current_user_chat_bubble;
+
+        if(!User.getUsername().equals(m.getUser()))
+            holder.username.setText(m.getUser());
+    }
+
+    @Override
+    public int getItemCount(){
+        return chat.size();
+    }
+
+    @Override
+    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
+
+        if(viewType == 0) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.other_users_chat_bubble, parent, false);
+            return new ViewHolder(v);
         }
         else {
-            mResource = R.layout.other_users_chat_bubble;
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.current_user_chat_bubble, parent, false);
+            return new ViewHolder(v);
         }
+    }
 
-        LayoutInflater inflater = LayoutInflater.from(mContext);
-        convertView = inflater.inflate(mResource, parent, false);
-        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm");
-        String formatTime = formatter.format(time);
-
-        TextView tvUsername = (TextView) convertView.findViewById(R.id.username12);
-        TextView tvMessage = (TextView) convertView.findViewById(R.id.message12);
-        TextView tvTime = (TextView) convertView.findViewById(R.id.time12);
-
-        if(mResource == R.layout.other_users_chat_bubble){
-            tvUsername.setText(user.getUsername());
-        }
-
-        tvTime.setText(formatTime);
-        tvMessage.setText(message);
-
-        return convertView;
+    @Override
+    public int getItemViewType(int position) {
+        if(User.getUsername().equals(chat.get(position).getUser()))
+            return 1;
+        else return 0;
     }
 }

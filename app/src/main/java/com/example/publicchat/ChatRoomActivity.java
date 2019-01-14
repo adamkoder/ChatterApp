@@ -9,6 +9,8 @@ import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -20,6 +22,7 @@ import android.support.v7.widget.Toolbar;
 import android.widget.PopupWindow;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,21 +40,18 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     private ArrayList<Message> chatHistory;
     private ChatBubbleAdapter adapter;
-    private ListView listView;
-
-    private SharedPreferences mPreferences;
-    private SharedPreferences.Editor mEditor;
+    private RecyclerView recyclerView;
 
     private FirebaseDatabase database;
     private DatabaseReference dbRefChatHistory;
     private DatabaseReference pushedDbRefChatHistory;
 
+    private FirebaseAuth mAuth;
+
     private Message chatBubbleInfo;
 
     private Gson gson = new Gson();
 
-    private Intent intent;
-    public static User currentUser;
     private EditText message;
 
     @Override
@@ -59,15 +59,11 @@ public class ChatRoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
 
+        mAuth = FirebaseAuth.getInstance();
+
         //sets toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mEditor = mPreferences.edit();
-
-        intent = getIntent();
-        currentUser = fromStringToObj(intent.getStringExtra(IntentKeys.USER));
 
         database = FirebaseDatabase.getInstance();
         dbRefChatHistory = database.getReference().child(DbKeys.chatRoom);
@@ -78,11 +74,15 @@ public class ChatRoomActivity extends AppCompatActivity {
             chatHistory = new ArrayList<>();
         }
 
-        adapter = new ChatBubbleAdapter(this, R.layout.other_users_chat_bubble, chatHistory);
-        listView = (ListView) findViewById(R.id.chat);
-        listView.setAdapter(adapter);
+        adapter = new ChatBubbleAdapter(chatHistory);
+        recyclerView = findViewById(R.id.chat);
+        recyclerView.setAdapter(adapter);
 
-        setTitle("Logged in as : " + currentUser.getUsername());
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(llm);
+
+        setTitle("Logged in as : " + User.getUsername());
     }
     
 
@@ -95,20 +95,19 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         //Adds the chatbubble to the chatHistory if message entered
         if (message.length() > 0) {
-            chatBubbleInfo = new Message(message.getText().toString(), currentUser, Calendar.getInstance().getTime());
+            chatBubbleInfo = new Message(message.getText().toString(), User.getUsername(), Calendar.getInstance().getTime());
             chatHistory.add(chatBubbleInfo);
             setChatHistoryToDatabase();
             message.setText(null);
+
+            adapter.notifyDataSetChanged();
+            recyclerView.smoothScrollToPosition(chatHistory.size() - 1);
         }
 
         //Display snackbar popup if message wasnt entered
         else if (message.length() <= 0) {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.messageText), "Can't send empty message", Snackbar.LENGTH_SHORT);
-            snackbar.show();
+            Snackbar.make(findViewById(R.id.messageText), "Can't send empty message", Snackbar.LENGTH_SHORT).show();
         }
-
-        adapter.notifyDataSetChanged();
-        listView.smoothScrollToPosition(chatHistory.size() - 1);
     }
 
     @Override
@@ -148,9 +147,9 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     //Removes the currentUsername key from Shared Preferences and logsout the user
     public void logoutButton(){
-        mPreferences.edit().remove("currentUsername").apply();
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        User.clearUser();
+        startActivity(new Intent(this, LoginActivity.class));
+        finish();
     }
 
     //Removes all the Nodes from the chatHistory list
@@ -163,11 +162,6 @@ public class ChatRoomActivity extends AppCompatActivity {
     //Disables the back button action
     @Override
     public void onBackPressed(){}
-
-    //Converts string to objects
-    private User fromStringToObj(String json){
-        return gson.fromJson(json, User.class);
-    }
 
     //Gets the chat history from real time database
     public void getChatHistoryFromDatabase(){
@@ -194,10 +188,5 @@ public class ChatRoomActivity extends AppCompatActivity {
     //Adds the chat history to shared preferences
     public void setChatHistoryToDatabase(){
        dbRefChatHistory.push().setValue(chatBubbleInfo);
-    }
-
-    //Getter for currentUser
-    public static User getCurrentUser() {
-        return currentUser;
     }
 }

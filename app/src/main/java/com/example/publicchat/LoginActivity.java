@@ -4,27 +4,32 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Paint;
 import android.preference.PreferenceManager;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private User currentUser;
-    private SharedPreferences mPreferences;
-    private SharedPreferences.Editor mEditor;
     private CheckBox rememberCheckBox;
 
-    private Gson gson = new Gson();
-    private ArrayList<User> listOfIds;
+    EditText getEmail, getPassword;
+
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,13 +38,13 @@ public class LoginActivity extends AppCompatActivity {
 
         rememberCheckBox = (CheckBox) findViewById(R.id.rememberCheckBox);
 
+        mAuth = FirebaseAuth.getInstance();
+
+        getEmail = (EditText) findViewById(R.id.login_username);
+        getPassword = (EditText) findViewById(R.id.login_password);
+
         Intent intent = getIntent();
-        this.listOfIds = gson.fromJson(intent.getStringExtra(IntentKeys.LIST_OF_USERS), new TypeToken<ArrayList<User>>(){}.getType());
 
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mEditor = mPreferences.edit();
-
-        getIdListFromSharedPrefs();
     }
 
     /*
@@ -47,50 +52,32 @@ public class LoginActivity extends AppCompatActivity {
         It starts the Chat room activity and sends it the entered username
     */
     public void enterChat(View view){
-        //Gets the username typed in by the user
-        EditText getUsername = (EditText) findViewById(R.id.login_username);
-        EditText getPassword = (EditText) findViewById(R.id.login_password);
 
-        boolean canShow = true;
+        String email = getEmail.getText().toString().trim();
+        String password = getPassword.getText().toString().trim();
 
-        if(getUsername.getText().toString().length() > 2) {
-            for(int i = 0; i < listOfIds.size(); i++){
-                if(listOfIds.get(i).getUsername().equals(getUsername.getText().toString())){
-                    if(listOfIds.get(i).getPassword().equals(getPassword.getText().toString())){
-                    currentUser = listOfIds.get(i);
-
-                    Intent intent = new Intent(this, ChatRoomActivity.class);
-
-                        if(this.rememberCheckBox.isChecked())
-                            mEditor.putString("currentUsername", fromObjToString(currentUser)).apply();
-
-                        intent.putExtra(IntentKeys.USER, fromObjToString(currentUser));
-                        startActivity(intent);
-                    }
-
-                    else if(currentUser.getPassword().isEmpty()){
-                        Snackbar snackbar = Snackbar.make(findViewById(R.id.enterRoomButton),"Please enter your password", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                        break;
-                    }
-
-                    else{
-                        Snackbar snackbar = Snackbar.make(findViewById(R.id.enterRoomButton),"Invalid password", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                        canShow = false;
-                        break;
+        if(getEmail.getText().toString().isEmpty()){
+            Snackbar.make(findViewById(R.id.login_username), "Please enter a valid email address", Snackbar.LENGTH_SHORT).show();
+        }
+        else if(getPassword.getText().toString().isEmpty()){
+            Snackbar.make(findViewById(R.id.login_password), "Please enter a valid password", Snackbar.LENGTH_SHORT).show();
+        }
+        else if(getPassword.getText().toString().length() < 6){
+            Snackbar.make(findViewById(R.id.login_password), "Password must be longer than 6 characters", Snackbar.LENGTH_SHORT).show();
+        }
+        else{
+            mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                @Override
+                public void onComplete(@NonNull Task<AuthResult> task) {
+                    if(task.isSuccessful()){
+                        System.out.println(getEmail.getText().toString());
+                        User.getInstance(getEmail.getText().toString());
+                        startActivity(new Intent(LoginActivity.this, ChatRoomActivity.class));
+                    }else{
+                        Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
                     }
                 }
-            }
-
-            if(currentUser == null && canShow){
-                Snackbar snackbar = Snackbar.make(findViewById(R.id.enterRoomButton),"Username not found, please register", Snackbar.LENGTH_LONG);
-                snackbar.show();
-            }
-        }
-        else {
-            Snackbar snackbar = Snackbar.make(findViewById(R.id.enterRoomButton),"Please enter user information", Snackbar.LENGTH_LONG);
-            snackbar.show();
+            });
         }
     }
 
@@ -101,24 +88,4 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed(){}
-
-    //adds the list of all user to the class list from the listOfIds key
-    private void getIdListFromSharedPrefs(){
-        String json = mPreferences.getString("listOfIds","");
-        listOfIds = gson.fromJson(json,new TypeToken<ArrayList<User>>(){}.getType());
-    }
-    private void setIdListToSharedPrefs(){
-        String json = gson.toJson(listOfIds);
-        mEditor.putString("listOfIds", json).apply();
-    }
-
-    //Converts Objects to strings
-    private String fromObjToString(User userObj){
-        return gson.toJson(userObj);
-    }
-
-    //Converts List to JSON
-    private String fromListToJSON(ArrayList list){
-        return gson.toJson(list);
-    }
 }

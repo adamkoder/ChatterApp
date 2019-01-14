@@ -15,6 +15,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 
 public class RegistrationActivity extends AppCompatActivity {
 
-    private ArrayList<User> listOfIds = new ArrayList<>();
     private Gson gson = new Gson();
     private boolean canCreateNewUser;
 
@@ -48,7 +48,6 @@ public class RegistrationActivity extends AppCompatActivity {
 
         canCreateNewUser = true;
 
-        getIdListFromSharedPrefs();
     }
 
     public void registerUser(View view){
@@ -72,25 +71,6 @@ public class RegistrationActivity extends AppCompatActivity {
                 snackbar.show();
                 canCreateNewUser = false;
             }
-
-            else if (listOfIds == null) {
-                listOfIds = new ArrayList<>();
-                listOfIds.add(new User(Integer.toString(listOfIds.size() + 1), currentUserName, currentPassword));
-                canCreateNewUser = false;
-                createNewUser();
-            }
-
-            else {
-                for (int i = 0; i < listOfIds.size(); i++) {
-                    if (listOfIds.get(i).getUsername().toLowerCase().equals(currentUserName.toLowerCase())) {
-                        ((EditText) findViewById(R.id.registrationUsername)).setText("");
-                        Snackbar snackbar = Snackbar.make(findViewById(R.id.registrationUsername), "Username already exists", Snackbar.LENGTH_LONG);
-                        snackbar.show();
-                        canCreateNewUser = false;
-                        break;
-                    }
-                }
-            }
             if (canCreateNewUser) {
                 System.out.println("PA JESAM!");
                 createNewUser();
@@ -105,8 +85,6 @@ public class RegistrationActivity extends AppCompatActivity {
 
     //Adds a new user to the list and starts the ChatRoomActivity with that User
     private void createNewUser(){
-        listOfIds.add(new User(Integer.toString(listOfIds.size() + 1), currentUserName, currentPassword));
-
         mAuth.createUserWithEmailAndPassword(currentEmail, currentPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -116,34 +94,18 @@ public class RegistrationActivity extends AppCompatActivity {
                             updateUI();
                         }
                         else{
-                            Toast.makeText(getApplicationContext(), "Workn't", Toast.LENGTH_LONG).show();
-                            System.out.println("PA NE RADI");
+                            if(task.getException() instanceof FirebaseAuthUserCollisionException){
+                                Toast.makeText(getApplicationContext(), "Email already in use", Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                                Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            }
                         }
                     }
                 });
     }
 
     private void updateUI(){
-        Intent intent = new Intent(this, ChatRoomActivity.class);
-        intent.putExtra(IntentKeys.USER, fromObjToString(listOfIds.get(listOfIds.size() - 1)));
-        mEditor.putString("currentUsername", fromObjToString(listOfIds.get(listOfIds.size() - 1)));
-        setIdListToSharedPrefs();
-        startActivity(intent);
-    }
-
-    //Converts User objects to JSON
-    private String fromObjToString(User userObj){
-        return gson.toJson(userObj);
-    }
-
-    //Sets the current list of users to Shared Preferences under the key listOfIds
-    private void setIdListToSharedPrefs(){
-        String json = gson.toJson(listOfIds);
-        mEditor.putString("listOfIds", json).apply();
-    }
-
-    private void getIdListFromSharedPrefs(){
-        String json = mPreferences.getString("listOfIds","");
-        listOfIds = gson.fromJson(json,new TypeToken<ArrayList<User>>(){}.getType());
+        startActivity(new Intent(this, ChatRoomActivity.class));
     }
 }
