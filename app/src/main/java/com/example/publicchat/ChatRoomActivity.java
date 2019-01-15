@@ -1,25 +1,17 @@
 package com.example.publicchat;
 
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ListView;
 import android.support.v7.widget.Toolbar;
-import android.widget.PopupWindow;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,7 +20,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -43,14 +34,10 @@ public class ChatRoomActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
 
     private FirebaseDatabase database;
-    private DatabaseReference dbRefChatHistory;
-    private DatabaseReference pushedDbRefChatHistory;
-
+    private DatabaseReference myRef;
     private FirebaseAuth mAuth;
 
     private Message chatBubbleInfo;
-
-    private Gson gson = new Gson();
 
     private EditText message;
 
@@ -59,15 +46,13 @@ public class ChatRoomActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_room);
 
-        mAuth = FirebaseAuth.getInstance();
-
         //sets toolbar
         Toolbar toolbar = (Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         database = FirebaseDatabase.getInstance();
-        dbRefChatHistory = database.getReference().child(DbKeys.chatRoom);
-        pushedDbRefChatHistory = dbRefChatHistory.push();
+        myRef = database.getReference().child(DbKeys.chatRoom);
+        mAuth = FirebaseAuth.getInstance();
 
         getChatHistoryFromDatabase();
         if(chatHistory == null) {
@@ -82,7 +67,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
 
-        setTitle("Logged in as : " + User.getUsername());
+        setTitle("Logged in as : " + CurrentUser.getInstance().getUsername());
     }
     
 
@@ -95,7 +80,8 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         //Adds the chatbubble to the chatHistory if message entered
         if (message.length() > 0) {
-            chatBubbleInfo = new Message(message.getText().toString(), User.getUsername(), Calendar.getInstance().getTime());
+            System.out.println(CurrentUser.getInstance().getUsername());
+            chatBubbleInfo = new Message(message.getText().toString(), CurrentUser.getInstance().getUsername(), Calendar.getInstance().getTime());
             chatHistory.add(chatBubbleInfo);
             setChatHistoryToDatabase();
             message.setText(null);
@@ -124,39 +110,17 @@ public class ChatRoomActivity extends AppCompatActivity {
                 logoutButton();
                 return true;
 
-            case R.id.action_clearChat:
-                clearChat();
-                return true;
-
-            case R.id.action_search:
-                showSearchPopupWindow();
-                return true;
-
             default:
                 return super.onOptionsItemSelected(item);
         }
     }
 
-    public void showSearchPopupWindow(){
-        LayoutInflater inflater = (LayoutInflater) ChatRoomActivity.this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View layout = inflater.inflate(R.layout.search_popup_window, null);
-
-        final PopupWindow popupWindow = new PopupWindow(layout, ConstraintLayout.LayoutParams.WRAP_CONTENT, ConstraintLayout.LayoutParams.WRAP_CONTENT, true);
-        popupWindow.showAtLocation(layout, Gravity.TOP,0, 0);
-    }
-
     //Removes the currentUsername key from Shared Preferences and logsout the user
     public void logoutButton(){
-        User.clearUser();
+        mAuth.signOut();
+        CurrentUser.clearUser();
         startActivity(new Intent(this, LoginActivity.class));
         finish();
-    }
-
-    //Removes all the Nodes from the chatHistory list
-    public void clearChat(){
-        chatHistory = new ArrayList<>();
-        setChatHistoryToDatabase();
-        adapter.notifyDataSetChanged();
     }
 
     //Disables the back button action
@@ -165,7 +129,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     //Gets the chat history from real time database
     public void getChatHistoryFromDatabase(){
-        dbRefChatHistory.addValueEventListener(new ValueEventListener() {
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 chatHistory.clear();
@@ -174,6 +138,7 @@ public class ChatRoomActivity extends AppCompatActivity {
                     keys.add(chatBubble.getKey());
                     Message message = chatBubble.getValue(Message.class);
                     chatHistory.add(message);
+                    recyclerView.smoothScrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
                     adapter.notifyDataSetChanged();
                 }
             }
@@ -187,6 +152,6 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     //Adds the chat history to shared preferences
     public void setChatHistoryToDatabase(){
-       dbRefChatHistory.push().setValue(chatBubbleInfo);
+       myRef.push().setValue(chatBubbleInfo);
     }
 }

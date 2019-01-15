@@ -6,8 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.gson.Gson;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -41,7 +39,7 @@ public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleAdapter.Vi
         holder.time.setText(formattedTime);
 
 
-        if(!User.getUsername().equals(m.getUser()))
+        if(!CurrentUser.getInstance().getUsername().equals(m.getUser()))
             holder.username.setText(m.getUser());
     }
 
@@ -67,7 +65,7 @@ public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleAdapter.Vi
 
     @Override
     public int getItemViewType(int position) {
-        if(User.getUsername().equals(chat.get(position).getUser()))
+        if(CurrentUser.getInstance().getUsername().equals(chat.get(position).getUser()))
             return 1;
         else return 0;
     }

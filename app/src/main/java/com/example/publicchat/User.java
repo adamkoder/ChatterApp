@@ -2,29 +2,19 @@ package com.example.publicchat;
 
 public class User {
 
-    private static User singleInstance = null;
+    protected String username;
 
-    private static String username;
+    public User(){}
 
-
-    private User(String user) {
-        username = user;
+    public User(String username) {
+        this.username = username;
     }
 
-    public static User getInstance(String username){
-        if(singleInstance == null)
-            singleInstance = new User(username);
-
-        return singleInstance;
-    }
-
-    public static void clearUser(){
-        singleInstance = null;
-    }
-
-    public static String getUsername() {
+    public String getUsername() {
         return username;
     }
 
-
+    public void setUsername(String username) {
+        this.username = username;
+    }
 }

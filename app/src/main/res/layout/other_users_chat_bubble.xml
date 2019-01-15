@@ -5,18 +5,12 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="2dp"
-        android:layout_weight="90"
-        tools:srcCompat="@tools:sample/avatars[10]" />
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="2.5dp"
+        android:layout_marginStart="25dp"
         android:layout_marginEnd="15dp"
         android:layout_weight="20"
         android:orientation="horizontal">
@@ -42,7 +36,7 @@
                     android:id="@+id/username12"
                     android:layout_width="wrap_content"
                     android:layout_height="20dp"
-                    android:text=""
+                    android:text="@string/error"
                     android:textAlignment="textStart"
                     android:textColor="#303030"
                     android:textSize="12sp" />

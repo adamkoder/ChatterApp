@@ -8,7 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,11 +26,9 @@ public class LoadingScreen extends AppCompatActivity {
 
     public static final String TAG = "TAG";
 
-    private SharedPreferences mPreferences;
-    private SharedPreferences.Editor mEditor;
+    private FirebaseAuth mAuth;
+    private DatabaseReference myRef;
     private FirebaseDatabase database;
-    private DatabaseReference dbRefListOfUsers;
-    private Gson gson = new Gson();
 
     private ArrayList<User> listOfIds = new ArrayList<>();
 
@@ -37,30 +37,26 @@ public class LoadingScreen extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_loading_screen);
 
-        mPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        mEditor = mPreferences.edit();
 
+        mAuth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
-        dbRefListOfUsers = database.getReference("listOfUsers");
+        myRef = database.getReference().child(DbKeys.users);
 
-        getIdListFromDatabase();
-        if(mPreferences.getString("currentUsername", "").equals("")){
-            final Intent intent = new Intent(this, LoginActivity.class);
-            intent.putExtra(IntentKeys.LIST_OF_USERS, fromListToJSON(listOfIds));
-            timer(intent);
+        if (mAuth.getCurrentUser() != null) {
+            getUsernameFromDb();
+            timer(new Intent(this, ChatRoomActivity.class));
+        } else {
+            timer(new Intent(this, LoginActivity.class));
         }
 
-        else{
-            final Intent intent = new Intent(this, ChatRoomActivity.class);
-            intent.putExtra(IntentKeys.USER, mPreferences.getString("currentUsername", "not working!"));
-            timer(intent);
-        }
     }
 
     @Override
-    public void onBackPressed(){}
+    public void onBackPressed() {
+    }
 
-    private void timer(final Intent intent){
+
+    private void timer(final Intent intent) {
         new CountDownTimer(2000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
@@ -74,20 +70,23 @@ public class LoadingScreen extends AppCompatActivity {
         }.start();
     }
 
-    private void getIdListFromDatabase(){
-        dbRefListOfUsers.addValueEventListener(new ValueEventListener() {
+    public void getUsernameFromDb() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                listOfIds = dataSnapshot.getValue(ArrayList.class);
+                for (DataSnapshot i : dataSnapshot.getChildren()) {
+                    if (mAuth.getCurrentUser().getUid().equals(i.getKey())) {
+                        String user = i.child(DbKeys.username).getValue().toString();
+                        CurrentUser.setInstance(user);
+                        break;
+                    }
+                }
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Log.w(TAG, "Failed to read value.", databaseError.toException());
+                Toast.makeText(getApplicationContext(), "Sum Ting Wong", Toast.LENGTH_LONG).show();
             }
         });
-    }
-    private String fromListToJSON(ArrayList list){
-        return gson.toJson(list);
     }
 }
