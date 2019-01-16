@@ -18,8 +18,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
 public class RegistrationActivity extends AppCompatActivity {
@@ -34,6 +37,7 @@ public class RegistrationActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private FirebaseDatabase mFirebaseDatabase;
     private DatabaseReference myRef;
+    private DatabaseReference myRefUsernames;
 
     private SharedPreferences mPreferences;
     private SharedPreferences.Editor mEditor;
@@ -64,6 +68,8 @@ public class RegistrationActivity extends AppCompatActivity {
         this.currentPassword = getPassword.getText().toString();
         this.currentEmail = getEmail.getText().toString();
 
+        myRefUsernames = mFirebaseDatabase.getReference().child(DbKeys.usernames).child(currentUsername);
+
         if (!currentPassword.equals(getPasswordConfirm.getText().toString())) {
             Snackbar.make(findViewById(R.id.registrationUsername), "Passwords don't match", Snackbar.LENGTH_LONG).show();
         } else if (currentPassword.length() > 6 || currentUsername.length() > 3) {
@@ -71,9 +77,7 @@ public class RegistrationActivity extends AppCompatActivity {
                 Snackbar.make(findViewById(R.id.registrationUsername), "Please fill in all the information", Snackbar.LENGTH_LONG).show();
                 canCreateNewUser = false;
             }
-            if (canCreateNewUser) {
-                createNewUser();
-            }
+            else doesUsernameExist();
         } else {
             Snackbar.make(findViewById(R.id.registrationUsername), "Password must be longer than 6 characters", Snackbar.LENGTH_LONG).show();
         }
@@ -87,15 +91,11 @@ public class RegistrationActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Successful registration", Toast.LENGTH_LONG).show();
-                            CurrentUser.setInstance(currentUsername);
+                            Toast.makeText(getApplicationContext(), "Successful registration", Toast.LENGTH_SHORT).show();
+                            CurrentUser.setInstance(currentUsername, mAuth.getUid());
                             updateUI();
-                        } else {
-                            if (task.getException() instanceof FirebaseAuthUserCollisionException) {
-                                Toast.makeText(getApplicationContext(), "Email already in use", Toast.LENGTH_LONG).show();
-                            } else {
-                                Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                            }
+                        } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {
+                            Toast.makeText(getApplicationContext(), "Email already in use", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -112,6 +112,25 @@ public class RegistrationActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 System.out.println("Successn't");
+            }
+        });
+
+        myRefUsernames.setValue(true);
+    }
+
+    public void doesUsernameExist() {
+        myRefUsernames.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    Toast.makeText(getApplicationContext(), "Username already exists", Toast.LENGTH_SHORT).show();
+                } else createNewUser();
+            }
+
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+                Toast.makeText(getApplicationContext(), "Sum Ting Wong", Toast.LENGTH_LONG).show();
             }
         });
     }

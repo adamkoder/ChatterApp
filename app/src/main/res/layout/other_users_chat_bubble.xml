@@ -52,7 +52,7 @@
             </LinearLayout>
 
             <TextView
-                android:text="lsdjk g dfsg"
+                android:text=""
                 android:id="@+id/message12"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

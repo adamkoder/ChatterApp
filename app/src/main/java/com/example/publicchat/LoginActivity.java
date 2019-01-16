@@ -69,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                         getUsernameFromDb();
                         startActivity(new Intent(LoginActivity.this, ChatRoomActivity.class));
                     } else {
-                        Toast.makeText(getApplicationContext(), task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "User not found", Toast.LENGTH_LONG).show();
                     }
                 }
             });
@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity {
                 for (DataSnapshot i : dataSnapshot.getChildren()) {
                     if (mAuth.getCurrentUser().getUid().equals(i.getKey())) {
                         String user = i.child(DbKeys.username).getValue().toString();
-                        CurrentUser.setInstance(user);
+                        CurrentUser.setInstance(user, i.getKey());
                         break;
                     }
                 }

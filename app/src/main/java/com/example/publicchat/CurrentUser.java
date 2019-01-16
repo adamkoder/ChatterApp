@@ -17,8 +17,8 @@ public class CurrentUser extends User {
         return singleInstance;
     }
 
-    public static void setInstance(String username){
-        singleInstance = new User(username);
+    public static void setInstance(String username, String UID){
+        singleInstance = new User(username, UID);
     }
 
         public static void clearUser(){

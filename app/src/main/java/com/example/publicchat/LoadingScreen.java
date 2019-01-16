@@ -30,8 +30,6 @@ public class LoadingScreen extends AppCompatActivity {
     private DatabaseReference myRef;
     private FirebaseDatabase database;
 
-    private ArrayList<User> listOfIds = new ArrayList<>();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -76,8 +74,7 @@ public class LoadingScreen extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot i : dataSnapshot.getChildren()) {
                     if (mAuth.getCurrentUser().getUid().equals(i.getKey())) {
-                        String user = i.child(DbKeys.username).getValue().toString();
-                        CurrentUser.setInstance(user);
+                        CurrentUser.setInstance(i.child(DbKeys.username).getValue().toString(), i.getKey());
                         break;
                     }
                 }
