@@ -1,4 +1,4 @@
-package com.example.publicchat;
+package com.example.publicchat.Common;
 
 public interface DbKeys {
     public final static String chatRoom = "chat_history";

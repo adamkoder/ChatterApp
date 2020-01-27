@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity
-            android:name=".LoadingScreen"
+            android:name=".Activities.LoadingActivity"
             android:theme="@style/NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -19,12 +19,12 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".Activities.LoginActivity"
             android:windowSoftInputMode="stateHidden|adjustResize"></activity>
         <activity
-            android:name=".ChatRoomActivity"
+            android:name=".Activities.ChatRoomActivity"
             android:exported="true" />
-        <activity android:name=".RegistrationActivity"
+        <activity android:name=".Activities.RegistrationActivity"
                   android:windowSoftInputMode="adjustResize"
             ></activity>
     </application>

@@ -1,4 +1,4 @@
-package com.example.publicchat;
+package com.example.publicchat.Common;
 
 public interface IntentKeys {
     public static final String USER = "USER";

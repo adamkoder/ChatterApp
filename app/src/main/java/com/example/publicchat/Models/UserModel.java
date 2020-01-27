@@ -1,13 +1,13 @@
-package com.example.publicchat;
+package com.example.publicchat.Models;
 
-public class User {
+public class UserModel {
 
     protected String username;
     protected String UID;
 
-    public User(){}
+    public UserModel(){}
 
-    public User(String username, String UID) {
+    public UserModel(String username, String UID) {
         this.username = username;
         this.UID = UID;
     }

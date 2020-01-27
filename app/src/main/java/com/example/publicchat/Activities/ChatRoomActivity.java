@@ -1,4 +1,4 @@
-package com.example.publicchat;
+package com.example.publicchat.Activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -14,6 +14,11 @@ import android.widget.EditText;
 import android.support.v7.widget.Toolbar;
 import android.widget.Toast;
 
+import com.example.publicchat.Adapters.ChatBubbleAdapter;
+import com.example.publicchat.Models.CurrentUserModel;
+import com.example.publicchat.Common.DbKeys;
+import com.example.publicchat.Models.MessageModel;
+import com.example.publicchat.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -29,7 +34,7 @@ public class ChatRoomActivity extends AppCompatActivity {
 
     public static final String TAG = "TAG";
 
-    private ArrayList<Message> chatHistory;
+    private ArrayList<MessageModel> chatHistory;
     private ChatBubbleAdapter adapter;
     private RecyclerView recyclerView;
 
@@ -37,7 +42,7 @@ public class ChatRoomActivity extends AppCompatActivity {
     private DatabaseReference myRef;
     private FirebaseAuth mAuth;
 
-    private Message chatBubbleInfo;
+    private MessageModel chatBubbleInfo;
 
     private EditText message;
 
@@ -67,7 +72,7 @@ public class ChatRoomActivity extends AppCompatActivity {
         llm.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(llm);
 
-        setTitle("Logged in as : " + CurrentUser.getInstance().getUsername());
+        setTitle("Logged in as : " + CurrentUserModel.getInstance().getUsername());
     }
     
 
@@ -80,8 +85,8 @@ public class ChatRoomActivity extends AppCompatActivity {
 
         //Adds the chatbubble to the chatHistory if message entered
         if (message.length() > 0) {
-            System.out.println(CurrentUser.getInstance().getUsername());
-            chatBubbleInfo = new Message(message.getText().toString(), CurrentUser.getInstance().getUsername(), Calendar.getInstance().getTime());
+            System.out.println(CurrentUserModel.getInstance().getUsername());
+            chatBubbleInfo = new MessageModel(message.getText().toString(), CurrentUserModel.getInstance().getUsername(), Calendar.getInstance().getTime());
             chatHistory.add(chatBubbleInfo);
             setChatHistoryToDatabase();
             message.setText(null);
@@ -118,7 +123,7 @@ public class ChatRoomActivity extends AppCompatActivity {
     //Removes the currentUsername key from Shared Preferences and logsout the user
     public void logoutButton(){
         mAuth.signOut();
-        CurrentUser.clearUser();
+        CurrentUserModel.clearUser();
         startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
@@ -136,8 +141,8 @@ public class ChatRoomActivity extends AppCompatActivity {
                 List<String> keys = new ArrayList<>();
                 for(DataSnapshot chatBubble : dataSnapshot.getChildren()){
                     keys.add(chatBubble.getKey());
-                    Message message = chatBubble.getValue(Message.class);
-                    chatHistory.add(message);
+                    MessageModel messageModel = chatBubble.getValue(MessageModel.class);
+                    chatHistory.add(messageModel);
                     recyclerView.smoothScrollToPosition(recyclerView.getAdapter().getItemCount() - 1);
                     adapter.notifyDataSetChanged();
                 }

@@ -1,4 +1,4 @@
-package com.example.publicchat;
+package com.example.publicchat.Adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,13 +6,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.example.publicchat.Models.CurrentUserModel;
+import com.example.publicchat.Models.MessageModel;
+import com.example.publicchat.R;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleAdapter.ViewHolder> {
 
-    private ArrayList<Message> chat;
-    private Message m;
+    private ArrayList<MessageModel> chat;
+    private MessageModel m;
 
     public class ViewHolder extends RecyclerView.ViewHolder{
         public TextView messageText, time, username;
@@ -25,7 +29,7 @@ public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleAdapter.Vi
         }
     }
 
-    public ChatBubbleAdapter(ArrayList<Message> chat){
+    public ChatBubbleAdapter(ArrayList<MessageModel> chat){
         this.chat = chat;
     }
 
@@ -39,7 +43,7 @@ public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleAdapter.Vi
         holder.time.setText(formattedTime);
 
 
-        if(!CurrentUser.getInstance().getUsername().equals(m.getUser()))
+        if(!CurrentUserModel.getInstance().getUsername().equals(m.getUser()))
             holder.username.setText(m.getUser());
     }
 
@@ -65,7 +69,7 @@ public class ChatBubbleAdapter extends RecyclerView.Adapter<ChatBubbleAdapter.Vi
 
     @Override
     public int getItemViewType(int position) {
-        if(CurrentUser.getInstance().getUsername().equals(chat.get(position).getUser()))
+        if(CurrentUserModel.getInstance().getUsername().equals(chat.get(position).getUser()))
             return 1;
         else return 0;
     }

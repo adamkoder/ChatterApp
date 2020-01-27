@@ -1,4 +1,4 @@
-package com.example.publicchat;
+package com.example.publicchat.Activities;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.publicchat.Common.DbKeys;
+import com.example.publicchat.Models.CurrentUserModel;
+import com.example.publicchat.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -23,7 +26,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
 
 public class RegistrationActivity extends AppCompatActivity {
 
@@ -84,7 +86,7 @@ public class RegistrationActivity extends AppCompatActivity {
 
     }
 
-    //Adds a new user to the list and starts the ChatRoomActivity with that User
+    //Adds a new user to the list and starts the ChatRoomActivity with that UserModel
     private void createNewUser() {
         mAuth.createUserWithEmailAndPassword(currentEmail, currentPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
@@ -92,7 +94,7 @@ public class RegistrationActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(getApplicationContext(), "Successful registration", Toast.LENGTH_SHORT).show();
-                            CurrentUser.setInstance(currentUsername, mAuth.getUid());
+                            CurrentUserModel.setInstance(currentUsername, mAuth.getUid());
                             updateUI();
                         } else if (task.getException() instanceof FirebaseAuthUserCollisionException) {
                             Toast.makeText(getApplicationContext(), "Email already in use", Toast.LENGTH_SHORT).show();
@@ -102,7 +104,7 @@ public class RegistrationActivity extends AppCompatActivity {
     }
 
     private void updateUI() {
-        myRef.child(mAuth.getCurrentUser().getUid()).setValue(CurrentUser.getInstance()).addOnSuccessListener(new OnSuccessListener<Void>() {
+        myRef.child(mAuth.getCurrentUser().getUid()).setValue(CurrentUserModel.getInstance()).addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 startActivity(new Intent(RegistrationActivity.this, ChatRoomActivity.class));

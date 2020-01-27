@@ -1,4 +1,4 @@
-package com.example.publicchat;
+package com.example.publicchat.Activities;
 
 import android.content.Intent;
 import android.support.annotation.NonNull;
@@ -10,6 +10,9 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.publicchat.Common.DbKeys;
+import com.example.publicchat.Models.CurrentUserModel;
+import com.example.publicchat.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -69,7 +72,7 @@ public class LoginActivity extends AppCompatActivity {
                         getUsernameFromDb();
                         startActivity(new Intent(LoginActivity.this, ChatRoomActivity.class));
                     } else {
-                        Toast.makeText(getApplicationContext(), "User not found", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getApplicationContext(), "UserModel not found", Toast.LENGTH_LONG).show();
                     }
                 }
             });
@@ -84,7 +87,7 @@ public class LoginActivity extends AppCompatActivity {
                 for (DataSnapshot i : dataSnapshot.getChildren()) {
                     if (mAuth.getCurrentUser().getUid().equals(i.getKey())) {
                         String user = i.child(DbKeys.username).getValue().toString();
-                        CurrentUser.setInstance(user, i.getKey());
+                        CurrentUserModel.setInstance(user, i.getKey());
                         break;
                     }
                 }

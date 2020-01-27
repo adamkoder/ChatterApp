@@ -1,16 +1,16 @@
-package com.example.publicchat;
+package com.example.publicchat.Models;
 
 import java.util.Date;
 
-public class Message {
+public class MessageModel {
     private String text;
     private String username;
     private Date time;
 
-    public Message() {
+    public MessageModel() {
     }
 
-    public Message(String text, String username, Date time) {
+    public MessageModel(String text, String username, Date time) {
         this.text = text;
         this.username = username;
         this.time = time;

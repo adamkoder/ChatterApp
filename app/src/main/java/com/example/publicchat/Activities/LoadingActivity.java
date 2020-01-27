@@ -1,28 +1,23 @@
-package com.example.publicchat;
+package com.example.publicchat.Activities;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.CountDownTimer;
-import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Toast;
 
+import com.example.publicchat.Common.DbKeys;
+import com.example.publicchat.Models.CurrentUserModel;
+import com.example.publicchat.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.GenericTypeIndicator;
 import com.google.firebase.database.ValueEventListener;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import java.util.ArrayList;
-
-public class LoadingScreen extends AppCompatActivity {
+public class LoadingActivity extends AppCompatActivity {
 
     public static final String TAG = "TAG";
 
@@ -74,7 +69,7 @@ public class LoadingScreen extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 for (DataSnapshot i : dataSnapshot.getChildren()) {
                     if (mAuth.getCurrentUser().getUid().equals(i.getKey())) {
-                        CurrentUser.setInstance(i.child(DbKeys.username).getValue().toString(), i.getKey());
+                        CurrentUserModel.setInstance(i.child(DbKeys.username).getValue().toString(), i.getKey());
                         break;
                     }
                 }
